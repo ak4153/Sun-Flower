@@ -12,9 +12,9 @@ const handler = nc({
   },
 }).get(async (req, res) => {
   await db.connect();
-  const product = await Product.find({});
+  const products = await Product.find({});
   await db.disconnect();
-  res.send(product);
+  res.send(products);
 });
 
 export default handler;

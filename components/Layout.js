@@ -9,6 +9,7 @@ import {
   ThemeProvider,
   CssBaseline,
   Switch,
+  Badge,
 } from '@material-ui/core';
 import useStyles from '../utils/styles';
 import NextLink from 'next/link';
@@ -21,7 +22,8 @@ export default function Layout({ children, title, description }) {
   //const value = { state, dispatch };
   //useContext gets its value from distructring value
   const { state, dispatch } = useContext(Store);
-  const { darkMode } = state;
+  //TODO badge  video 16 757
+  const { darkMode, cart } = state;
   const [mode, setMode] = useState(false);
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function Layout({ children, title, description }) {
     const newDarkMode = !darkMode;
     Cookies.set('darkMode', newDarkMode ? 'ON' : 'OFF');
   };
+
   //wrap elements you want to provide the theme for
   //with <ThemeProvider theme={theme}>{children}</ThemeProvider>
   //then go to the children and add <Child variant=<class>/>
@@ -87,7 +90,18 @@ export default function Layout({ children, title, description }) {
             <Switch checked={mode} onChange={darkModeChangeHandler}></Switch>
             <div>
               <NextLink href="/cart" passHref>
-                <Link>Cart</Link>
+                <Link>
+                  {cart.cartItems.length > 0 ? (
+                    <Badge
+                      color="secondary"
+                      badgeContent={cart.cartItems.length}
+                    >
+                      Cart
+                    </Badge>
+                  ) : (
+                    'Cart'
+                  )}
+                </Link>
               </NextLink>
             </div>
             <div>

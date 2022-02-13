@@ -15,17 +15,37 @@ import Image from 'next/image';
 import useStyles from '../../utils/styles';
 import db from '../../utils/db';
 import { Product } from '../../models/product';
+import { useContext } from 'react';
+
+import { Store } from '../../utils/Store';
+// import Cookies from 'js-cookie';
+import axios from 'axios';
 //this works as follows:
 //you have a hyper link to /product/:slug
 //next goes to            ./page/product/[slug]
 //so if you want to create a diff route follow the same pattern
 export default function ProductScreen(props) {
   const classes = useStyles();
-
+  const { dispatch } = useContext(Store);
   const { product } = props;
   if (!product) {
     return <div>Product Not Found</div>;
   }
+  const handleAddToCart = async () => {
+    axios
+      .get(`/api/products/${product._id}`)
+      .then((result) => {
+        if (result.data.countInStock <= 0) {
+          window.alert('sorry out of stock');
+          return;
+        }
+      })
+      .catch((err) => console.log(err));
+
+    dispatch({ type: 'ADD_TO_CART', payload: { ...product, quantity: 1 } });
+
+    return;
+  };
 
   return (
     <Layout title={product.name} description={product.description}>
@@ -102,6 +122,7 @@ export default function ProductScreen(props) {
                   color="primary"
                   fullWidth
                   variant="contained"
+                  onClick={handleAddToCart}
                 >
                   Add to cart
                 </Button>

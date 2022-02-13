@@ -17,7 +17,7 @@ import { Product } from '../models/product';
 //props are coming from getServerSideProps
 export default function Home(props) {
   const { products } = props;
-  console.log(products);
+
   return (
     <div>
       <Layout>
