@@ -1,5 +1,3 @@
-## Summary
-
 <h1>
 Next.js ecommerce project
 </h1>
@@ -7,9 +5,7 @@ Next.js ecommerce project
 "Sun Flower" is an ecommerce website developed with next.js,redux,mongodb
 </p>
 
-This is a [Next.js](https://nextjs.org/) project
-
-## Getting Started
+## Install Guide
 
 First, run the development server:
 
