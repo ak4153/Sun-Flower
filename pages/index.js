@@ -10,12 +10,12 @@ import {
   Button,
 } from '@material-ui/core';
 import NextLink from 'next/link';
-
+import dynamic from 'next/dynamic';
 import db from '../utils/db';
 import { Product } from '../models/product';
 
 //props are coming from getServerSideProps
-export default function Home(props) {
+function Home(props) {
   const { products } = props;
 
   return (
@@ -74,3 +74,12 @@ export async function getServerSideProps() {
     },
   };
 }
+
+//https://nextjs.org/docs/advanced-features/dynamic-import
+//server doesnt load what the client did from cookies.
+//so you need to disable SSR for this component
+//this componenet wont be SEO friendly because it isnt SSR
+export default dynamic(() => Promise.resolve(Home), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});

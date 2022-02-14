@@ -1,5 +1,5 @@
 import React from 'react';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import {
   Link,
@@ -20,11 +20,13 @@ import { useContext } from 'react';
 import { Store } from '../../utils/Store';
 // import Cookies from 'js-cookie';
 import axios from 'axios';
+
 //this works as follows:
 //you have a hyper link to /product/:slug
 //next goes to            ./page/product/[slug]
 //so if you want to create a diff route follow the same pattern
 export default function ProductScreen(props) {
+  const router = useRouter();
   const classes = useStyles();
   const { dispatch } = useContext(Store);
   const { product } = props;
@@ -41,7 +43,7 @@ export default function ProductScreen(props) {
         }
       })
       .catch((err) => console.log(err));
-
+    router.push('/cart');
     dispatch({ type: 'ADD_TO_CART', payload: { ...product, quantity: 1 } });
 
     return;
