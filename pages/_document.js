@@ -1,6 +1,7 @@
 import { ServerStyleSheets } from '@material-ui/core/styles';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
+import cookies from 'js-cookie';
 
 export default class MyDocument extends Document {
   render() {

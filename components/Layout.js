@@ -94,7 +94,10 @@ export default function Layout({ children, title, description }) {
                   {cart.cartItems.length > 0 ? (
                     <Badge
                       color="secondary"
-                      badgeContent={cart.cartItems.length}
+                      badgeContent={cart.cartItems.reduce(
+                        (acc, curr) => acc + curr.quantity,
+                        0
+                      )}
                     >
                       Cart
                     </Badge>
@@ -107,6 +110,11 @@ export default function Layout({ children, title, description }) {
             <div>
               <NextLink href="/login" passHref>
                 <Link>Login</Link>
+              </NextLink>
+            </div>
+            <div>
+              <NextLink href="/signup" passHref>
+                <Link>Signup</Link>
               </NextLink>
             </div>
           </Toolbar>

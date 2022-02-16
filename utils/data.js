@@ -33,7 +33,7 @@ const data = {
       rating: 4.5,
       price: 55,
       numReviews: 10,
-      countInStock: 20,
+      countInStock: 1,
       description: 'A popular shirt',
     },
     {

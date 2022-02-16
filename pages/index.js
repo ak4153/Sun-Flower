@@ -10,13 +10,18 @@ import {
   Button,
 } from '@material-ui/core';
 import NextLink from 'next/link';
-import dynamic from 'next/dynamic';
+import dynamicSSR from '../utils/dynamicFunction';
 import db from '../utils/db';
 import { Product } from '../models/product';
-
+import handleAddToCartFuncion from '../utils/handleAddToCart';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
+import { Store } from '../utils/Store';
 //props are coming from getServerSideProps
 function Home(props) {
   const { products } = props;
+  const { state, dispatch } = useContext(Store);
+  const router = useRouter();
 
   return (
     <div>
@@ -45,7 +50,13 @@ function Home(props) {
 
                 <CardActions>
                   <Typography>${product.price}</Typography>
-                  <Button size="small" color="primary">
+                  <Button
+                    onClick={() =>
+                      handleAddToCartFuncion(dispatch, product, router, state)
+                    }
+                    size="small"
+                    color="primary"
+                  >
                     Add to cart
                   </Button>
                 </CardActions>
@@ -75,11 +86,4 @@ export async function getServerSideProps() {
   };
 }
 
-//https://nextjs.org/docs/advanced-features/dynamic-import
-//server doesnt load what the client did from cookies.
-//so you need to disable SSR for this component
-//this componenet wont be SEO friendly because it isnt SSR
-export default dynamic(() => Promise.resolve(Home), {
-  ssr: false,
-  loading: () => <p>Loading...</p>,
-});
+export default dynamicSSR(Home);

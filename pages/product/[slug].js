@@ -16,10 +16,10 @@ import useStyles from '../../utils/styles';
 import db from '../../utils/db';
 import { Product } from '../../models/product';
 import { useContext } from 'react';
-
+import handleAddToCartFuncion from '../../utils/handleAddToCart';
 import { Store } from '../../utils/Store';
 // import Cookies from 'js-cookie';
-import axios from 'axios';
+// import axios from 'axios';
 
 //this works as follows:
 //you have a hyper link to /product/:slug
@@ -28,26 +28,11 @@ import axios from 'axios';
 export default function ProductScreen(props) {
   const router = useRouter();
   const classes = useStyles();
-  const { dispatch } = useContext(Store);
+  const { state, dispatch } = useContext(Store);
   const { product } = props;
   if (!product) {
     return <div>Product Not Found</div>;
   }
-  const handleAddToCart = async () => {
-    axios
-      .get(`/api/products/${product._id}`)
-      .then((result) => {
-        if (result.data.countInStock <= 0) {
-          window.alert('sorry out of stock');
-          return;
-        }
-      })
-      .catch((err) => console.log(err));
-    router.push('/cart');
-    dispatch({ type: 'ADD_TO_CART', payload: { ...product, quantity: 1 } });
-
-    return;
-  };
 
   return (
     <Layout title={product.name} description={product.description}>
@@ -124,7 +109,9 @@ export default function ProductScreen(props) {
                   color="primary"
                   fullWidth
                   variant="contained"
-                  onClick={handleAddToCart}
+                  onClick={() =>
+                    handleAddToCartFuncion(dispatch, product, router, state)
+                  }
                 >
                   Add to cart
                 </Button>

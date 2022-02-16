@@ -22,17 +22,41 @@ import Image from 'next/image';
 //this function treats the
 //Expected server HTML to contain a matching <span> in <a>.
 //error, which means: server side didnt render what the client did
-import dynamic from 'next/dynamic';
+import dynamicSSR from '../utils/dynamicFunction';
+import axios from 'axios';
+import Router, { useRouter } from 'next/router';
 
 const CartScreen = () => {
-  const { state } = useContext(Store);
+  const { state, dispatch } = useContext(Store);
   const { cartItems } = state.cart;
+  const router = useRouter();
+  const handleRemoveCartItem = (item) => {
+    console.log('removing...');
+    dispatch({ type: 'REMOVE_FROM_CART', payload: item });
+  };
 
+  const updateCartHandler = (product, quantity) => {
+    axios
+      .get(`/api/products/${product._id}`)
+      .then((result) => {
+        if (result.data.countInStock < quantity) {
+          window.alert('sorry out of stock');
+          return;
+        }
+      })
+      .catch((err) => console.log(err));
+
+    dispatch({ type: 'ADD_TO_CART', payload: { ...product, quantity } });
+  };
+  const handleCheckOut = (e) => {
+    router.push('/shipping');
+  };
   return (
     <Layout title="Shopping Cart">
       <Typography variant="h1" component="h1">
         Shopping Cart
       </Typography>
+
       {cartItems == 0 ? (
         <div>
           Cart is empty. <NextLink href="/">Go to products</NextLink>
@@ -63,6 +87,7 @@ const CartScreen = () => {
                 </TableHead>
 
                 <TableBody>
+                  {console.log('TAbleBody', cartItems)}
                   {cartItems.map((item) => (
                     <TableRow key={item._id}>
                       <TableCell>
@@ -86,7 +111,12 @@ const CartScreen = () => {
                         </Typography>
                       </TableCell>
                       <TableCell align="right">
-                        <Select value={item.quantity}>
+                        <Select
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateCartHandler(item, e.target.value)
+                          }
+                        >
                           {[...Array(item.countInStock).keys()].map((x) => (
                             <MenuItem key={x + 1} value={x + 1}>
                               {x + 1}
@@ -96,7 +126,13 @@ const CartScreen = () => {
                       </TableCell>
                       <TableCell align="right">${item.price}</TableCell>
                       <TableCell align="right">
-                        <Button color="secondary">x</Button>
+                        <Button
+                          onClick={() => handleRemoveCartItem(item)}
+                          color="secondary"
+                          variant="contained"
+                        >
+                          X
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -118,7 +154,12 @@ const CartScreen = () => {
                 </Typography>
               </ListItem>
               <ListItem>
-                <Button variant="contained" fullWidth color="primary">
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="primary"
+                  onClick={handleCheckOut}
+                >
                   Check Out
                 </Button>
               </ListItem>
@@ -133,7 +174,4 @@ const CartScreen = () => {
 //https://nextjs.org/docs/advanced-features/dynamic-import
 //server doesnt load what the client did from cookies.
 //so you need to disable SSR for this component
-export default dynamic(() => Promise.resolve(CartScreen), {
-  ssr: false,
-  loading: () => <p>Loading...</p>,
-});
+export default dynamicSSR(CartScreen);

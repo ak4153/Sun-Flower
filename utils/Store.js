@@ -26,7 +26,7 @@ const reducer = (state, action) => {
       return { ...state, darkMode: true };
     case 'DARK_MODE_OFF':
       return { ...state, darkMode: false };
-    //TODO here also add to cart
+
     case 'ADD_TO_CART': {
       const newItem = action.payload;
 
@@ -35,12 +35,29 @@ const reducer = (state, action) => {
       );
 
       const cartItems = existItem
-        ? state.cart.cartItems.map((item) =>
-            existItem.name === item.name ? newItem : item
-          )
+        ? state.cart.cartItems.map((item) => {
+            if (item.name === existItem.name) {
+              return newItem;
+            }
+            return item;
+          })
         : [...state.cart.cartItems, newItem];
+
       Cookies.set('cartItems', JSON.stringify(cartItems));
-      //...state.cart - spreadts the cart objects
+
+      //...state.cart - spreads the cart objects
+      return { ...state, cart: { ...state.cart, cartItems } };
+    }
+    case 'REMOVE_FROM_CART': {
+      const itemToRemove = action.payload;
+      console.log('itemToRemove', itemToRemove);
+
+      const cartItems = state.cart.cartItems.filter(
+        (item) => itemToRemove._id !== item._id
+      );
+
+      Cookies.set('cartItems', JSON.stringify(cartItems));
+
       return { ...state, cart: { ...state.cart, cartItems } };
     }
 
