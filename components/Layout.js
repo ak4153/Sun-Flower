@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import useStyles from '../utils/styles';
 import NextLink from 'next/link';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { Store } from '../utils/Store';
 import Cookies from 'js-cookie';
 
@@ -25,10 +25,6 @@ export default function Layout({ children, title, description }) {
   //TODO badge  video 16 757
   const { darkMode, cart } = state;
   const [mode, setMode] = useState(false);
-
-  useEffect(() => {
-    setMode(darkMode);
-  }, [darkMode]);
 
   const darkModeChangeHandler = () => {
     dispatch({ type: darkMode ? 'DARK_MODE_OFF' : 'DARK_MODE_ON' }, state);
@@ -66,6 +62,11 @@ export default function Layout({ children, title, description }) {
       },
     },
   });
+  //fixes the darkmode white flicker
+  useLayoutEffect(() => {
+    setMode(darkMode);
+  }, [darkMode]);
+
   return (
     <div>
       <Head>
