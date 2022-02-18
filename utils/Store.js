@@ -14,6 +14,7 @@ const initialState = {
       ? JSON.parse(Cookies.get('cartItems'))
       : [],
   },
+  user: Cookies.get('user') ? JSON.parse(Cookies.get('user')) : '',
 };
 
 //3.create a reducer function, takes state?
@@ -26,10 +27,8 @@ const reducer = (state, action) => {
       return { ...state, darkMode: true };
     case 'DARK_MODE_OFF':
       return { ...state, darkMode: false };
-
     case 'ADD_TO_CART': {
       const newItem = action.payload;
-
       const existItem = state.cart.cartItems.find(
         (item) => item._id === newItem._id
       );
@@ -42,25 +41,38 @@ const reducer = (state, action) => {
             return item;
           })
         : [...state.cart.cartItems, newItem];
-
       Cookies.set('cartItems', JSON.stringify(cartItems));
-
       //...state.cart - spreads the cart objects
       return { ...state, cart: { ...state.cart, cartItems } };
     }
     case 'REMOVE_FROM_CART': {
       const itemToRemove = action.payload;
       console.log('itemToRemove', itemToRemove);
-
       const cartItems = state.cart.cartItems.filter(
         (item) => itemToRemove._id !== item._id
       );
-
       Cookies.set('cartItems', JSON.stringify(cartItems));
-
       return { ...state, cart: { ...state.cart, cartItems } };
     }
+    case 'SET_USER': {
+      const user = action.payload;
+      console.log('user:', user);
+      if (user) {
+        Cookies.set('user', JSON.stringify(user));
+        return { ...state, user: user };
+      } else {
+        return { ...state };
+      }
+    }
+    case 'LOGOUT_USER': {
+      const user = action.payload;
+      Cookies.remove('user');
+      Cookies.remove('cartItems');
+      return { ...state, user: '', cart: { cartItems: [] } };
+    }
+    // case 'SIGNUP_USER': {
 
+    // }
     default:
       return state;
   }

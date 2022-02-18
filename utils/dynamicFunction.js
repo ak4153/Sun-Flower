@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import React from 'react';
 import Loading from '../components/Loading';
 /**
  * * disables SSR for a component

@@ -10,22 +10,41 @@ import {
   CssBaseline,
   Switch,
   Badge,
+  Button,
+  Menu,
+  MenuItem,
 } from '@material-ui/core';
 import useStyles from '../utils/styles';
 import NextLink from 'next/link';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { Store } from '../utils/Store';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 export default function Layout({ children, title, description }) {
   const classes = useStyles();
   //const value = { state, dispatch };
   //useContext gets its value from distructring value
   const { state, dispatch } = useContext(Store);
-  //TODO badge  video 16 757
   const { darkMode, cart } = state;
   const [mode, setMode] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const router = useRouter();
+  const open = Boolean(anchorEl);
 
+  const handleClickMenu = (e) => {
+    console.log(e.currentTarget);
+    setAnchorEl(e.currentTarget);
+  };
+  const handleCloseMenu = (e) => {
+    setAnchorEl(null);
+  };
+  const handleLogOut = () => {
+    if (state.user) {
+      dispatch({ type: 'LOGOUT_USER', payload: state.user });
+      router.push('/');
+    }
+  };
   const darkModeChangeHandler = () => {
     dispatch({ type: darkMode ? 'DARK_MODE_OFF' : 'DARK_MODE_ON' }, state);
     const newDarkMode = !darkMode;
@@ -71,7 +90,6 @@ export default function Layout({ children, title, description }) {
     <div>
       <Head>
         <title>{title ? `${title} - Sun Flower` : 'Sun Flower'}</title>
-
         {description && <meta name="description" content={description}></meta>}
       </Head>
       <ThemeProvider theme={theme}>
@@ -108,16 +126,47 @@ export default function Layout({ children, title, description }) {
                 </Link>
               </NextLink>
             </div>
-            <div>
-              <NextLink href="/login" passHref>
-                <Link>Login</Link>
-              </NextLink>
-            </div>
-            <div>
-              <NextLink href="/signup" passHref>
-                <Link>Signup</Link>
-              </NextLink>
-            </div>
+            {!state.user ? (
+              <>
+                <div>
+                  <NextLink href="/login" passHref>
+                    <Link>Login</Link>
+                  </NextLink>
+                </div>
+                <div>
+                  <NextLink href="/signup" passHref>
+                    <Link>Signup</Link>
+                  </NextLink>
+                </div>
+              </>
+            ) : (
+              <>
+                <Button
+                  id="basic-button"
+                  aria-controls={open ? 'basic-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClickMenu}
+                  className={classes.navbarButton}
+                >
+                  {state.user.name}
+                </Button>
+
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleCloseMenu}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                  }}
+                >
+                  <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
+                  <MenuItem onClick={handleCloseMenu}>My account</MenuItem>
+                  <MenuItem onClick={handleLogOut}>Logout</MenuItem>
+                </Menu>
+              </>
+            )}
           </Toolbar>
         </AppBar>
         <Container className={classes.main}>{children}</Container>

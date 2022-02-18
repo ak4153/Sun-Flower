@@ -31,5 +31,9 @@ const useStyles = makeStyles({
     maxWidth: 800,
     margin: '0 auto',
   },
+  navabarButtonm: {
+    color: 'white',
+    textTransform: 'initial',
+  },
 });
 export default useStyles;
