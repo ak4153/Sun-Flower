@@ -12,11 +12,12 @@ handler.post(async (req, res) => {
   await db.connect();
   const user = await User.findOne({ email: email });
   await db.disconnect();
+
   //check if password match and create a token
-  const passwordMatches = bcrypt.compareSync(password, user.password);
-  if (user && passwordMatches) {
+
+  if (user && bcrypt.compareSync(password, user.password)) {
     const auth = signToken(user);
-    res.status(201).send({
+    return res.status(201).send({
       _id: user._id,
       isAdmin: user.isAdmin,
       email: user.email,
@@ -24,7 +25,7 @@ handler.post(async (req, res) => {
       token: auth,
     });
   } else {
-    res.status(401).send({ message: 'Invalid Email or Password' });
+    return res.status(401).send({ message: 'Invalid Email or Password' });
   }
 });
 

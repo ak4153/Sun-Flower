@@ -24,8 +24,8 @@ const useStyles = makeStyles({
   },
   //[slug] section of a product
   section: {
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 20,
+    marginBottom: 20,
   },
   form: {
     maxWidth: 800,
@@ -35,5 +35,6 @@ const useStyles = makeStyles({
     color: 'white',
     textTransform: 'initial',
   },
+  transparentBackground: { backgroundColor: 'transparent' },
 });
 export default useStyles;

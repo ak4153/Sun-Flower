@@ -73,6 +73,7 @@ export default function Layout({ children, title, description }) {
 
     palette: {
       type: mode ? 'dark' : 'light',
+
       primary: {
         main: '#f0c000',
       },

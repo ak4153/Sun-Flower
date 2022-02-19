@@ -15,12 +15,18 @@ const initialState = {
       : [],
   },
   user: Cookies.get('user') ? JSON.parse(Cookies.get('user')) : '',
+  shippingData: Cookies.get('shippingData')
+    ? JSON.parse(Cookies.get('shippingData'))
+    : '',
+  paymentMethod: Cookies.get('paymentMethod')
+    ? JSON.parse(Cookies.get('paymentMethod'))
+    : '',
 };
 
 //3.create a reducer function, takes state?
 //and the action
+
 const reducer = (state, action) => {
-  console.log('action', action.type);
   switch (action.type) {
     case 'DARK_MODE_ON':
       //spreads the initialState and changes the dark mode
@@ -70,9 +76,16 @@ const reducer = (state, action) => {
       Cookies.remove('cartItems');
       return { ...state, user: '', cart: { cartItems: [] } };
     }
-    // case 'SIGNUP_USER': {
-
-    // }
+    case 'SHIPPING_DATA': {
+      const data = action.payload;
+      Cookies.set('shippingData', JSON.stringify(data));
+      return { ...state, shippingData: data };
+    }
+    case 'SAVE_PAYMENT_METHOD': {
+      const data = action.payload;
+      Cookies.set('paymentMethod', JSON.stringify(data));
+      return { ...state, paymentMethod: data };
+    }
     default:
       return state;
   }
@@ -84,6 +97,7 @@ export const StoreProvider = (props) => {
   //the reducer
 
   //dark mode state
+
   const [state, dispatch] = useReducer(reducer, initialState);
   const value = { state, dispatch };
   return <Store.Provider value={value}>{props.children}</Store.Provider>;
