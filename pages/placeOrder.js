@@ -14,8 +14,9 @@ import {
   ListItem,
   TableContainer,
   Card,
+  CircularProgress,
 } from '@material-ui/core';
-import React, { useContext, useLayoutEffect } from 'react';
+import React, { useContext, useLayoutEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { Store } from '../utils/Store';
 import NextLink from 'next/link';
@@ -28,13 +29,16 @@ import axios from 'axios';
 import Router, { useRouter } from 'next/router';
 import useStyles from '../utils/styles';
 import CheckoutWizard from '../components/CheckoutWizard';
-
+import { getError } from '../utils/error';
+import { Alert } from '@material-ui/lab';
 const PlaceOrder = () => {
   const classess = useStyles();
   const { state, dispatch } = useContext(Store);
   const { cartItems } = state.cart;
   const { shippingData } = state;
   const router = useRouter();
+  const [alert, setAlert] = useState();
+  const [loading, setLoading] = useState();
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
   const itemsPrice = cartItems.reduce(
     (acc, curr) => acc + curr.price * curr.quantity,
@@ -42,19 +46,48 @@ const PlaceOrder = () => {
   );
   const tax = round2(itemsPrice * 0.17);
   const shippingPrice = 8;
-  const handleCheckOut = (e) => {
-    router.push('/shipping');
+  const totalPrice = shippingPrice + tax + itemsPrice;
+  const handlePlaceOrder = async (e) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.post(
+        '/api/orders/',
+        {
+          orderItems: cartItems,
+          shippingData,
+          paymentMethod: state.paymentMethod,
+          itemsPrice,
+          tax,
+          shippingPrice,
+          totalPrice,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${state.user.token}`,
+          },
+        }
+      );
+      dispatch({ type: 'CART_CLEAR' });
+      setLoading(false);
+      router.push(`/order/${data._id}`);
+    } catch (err) {
+      setLoading(false);
+      setAlert(getError(err));
+    }
   };
+
   useLayoutEffect(() => {
     if (!state.paymentMethod) {
       router.push('/payment');
     }
+    if (cartItems.length <= 0) router.push('/');
   });
   return (
-    <Layout title="Shopping Cart">
+    <Layout title="Place Order">
       <Typography className={classess.section} variant="h1" component="h1">
         Place Order
       </Typography>
+      {alert && <Alert severity="warning">{alert}</Alert>}
       <CheckoutWizard activeStep={3}></CheckoutWizard>
       <Grid container spacing={1}>
         <Grid item md={9} xs={12}>
@@ -205,7 +238,7 @@ const PlaceOrder = () => {
                     </Typography>
                     <Grid item xs={6}>
                       <Typography>
-                        <strong>${shippingPrice + tax + itemsPrice}</strong>
+                        <strong>${totalPrice}</strong>
                       </Typography>
                     </Grid>
                   </Grid>
@@ -217,11 +250,16 @@ const PlaceOrder = () => {
                   variant="contained"
                   fullWidth
                   color="primary"
-                  onClick={handleCheckOut}
+                  onClick={handlePlaceOrder}
                 >
                   Place Order
                 </Button>
               </ListItem>
+              {loading && (
+                <ListItem>
+                  <CircularProgress />
+                </ListItem>
+              )}
             </List>
           </Card>
         </Grid>

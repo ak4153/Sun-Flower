@@ -26,4 +26,32 @@ const signToken = (user) => {
   );
 };
 
-export { signToken };
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * middleware for checking if auth token is supplied
+ * returns decoded data inside req.use
+ */
+const isAuth = async (req, res, next) => {
+  //req.headers is supplied by placeOder post request
+  const { authorization } = req.headers;
+  if (authorization) {
+    //Bearer xxxxxxx
+    //1234567xxxxxx
+    const token = authorization.slice(7, req.headers.authorization.length);
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedData) => {
+      if (err) {
+        res.status(401).send({ message: 'token is not valid' });
+      } else {
+        req.user = decodedData;
+        //carries on the request forward to the next middleware
+        next();
+      }
+    });
+  } else {
+    res.status(401).send({ message: 'token is not supplied' });
+  }
+};
+export { signToken, isAuth };

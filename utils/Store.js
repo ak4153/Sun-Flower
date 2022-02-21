@@ -74,7 +74,11 @@ const reducer = (state, action) => {
       const user = action.payload;
       Cookies.remove('user');
       Cookies.remove('cartItems');
-      return { ...state, user: '', cart: { cartItems: [] } };
+      return {
+        ...state,
+        user: '',
+        cart: { cartItems: [], shippingData: {}, paymentMethod: '' },
+      };
     }
     case 'SHIPPING_DATA': {
       const data = action.payload;
@@ -85,6 +89,10 @@ const reducer = (state, action) => {
       const data = action.payload;
       Cookies.set('paymentMethod', JSON.stringify(data));
       return { ...state, paymentMethod: data };
+    }
+    case 'CART_CLEAR': {
+      Cookies.remove('cartItems');
+      return { ...state, cart: { cartItems: [] } };
     }
     default:
       return state;
