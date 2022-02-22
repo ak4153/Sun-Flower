@@ -89,6 +89,7 @@ const PlaceOrder = () => {
       </Typography>
       {alert && <Alert severity="warning">{alert}</Alert>}
       <CheckoutWizard activeStep={3}></CheckoutWizard>
+
       <Grid container spacing={1}>
         <Grid item md={9} xs={12}>
           <Card className={classess.section}>
@@ -179,13 +180,13 @@ const PlaceOrder = () => {
             </List>
           </Card>
         </Grid>
+
         <Grid item md={3} xs={12}>
           <Card className={classess.section}>
             <List>
               <ListItem>
                 <Typography variant="h2">Order Summary</Typography>
               </ListItem>
-
               <ListItem>
                 <Grid container>
                   <Grid item xs={6}>

@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const handleAddToCartFuncion = async (dispatch, product, router, state) => {
+const handleAddToCartFuncion = async (
+  dispatch,
+  product,
+  router,
+  state,
+  setAlert
+) => {
   const existItem = state.cart.cartItems.find(
     (item) => product.name === item.name
   );
@@ -9,15 +15,13 @@ const handleAddToCartFuncion = async (dispatch, product, router, state) => {
     .get(`/api/products/${product._id}`)
     .then((result) => {
       if (result.data.countInStock <= 0) {
-        window.alert('sorry out of stock');
-        return;
+        return setAlert({ message: 'Out of stock', variant: 'warning' });
       }
     })
     .catch((err) => console.log(err));
 
   if (product.countInStock < quantity) {
-    window.alert('not enough in stock');
-    return;
+    return setAlert({ message: 'Out of stock', variant: 'warning' });
   }
   dispatch({
     type: 'ADD_TO_CART',
@@ -27,6 +31,6 @@ const handleAddToCartFuncion = async (dispatch, product, router, state) => {
     },
   });
   router.push('/cart');
-  return;
+  return false;
 };
 export default handleAddToCartFuncion;

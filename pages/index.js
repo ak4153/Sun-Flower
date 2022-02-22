@@ -15,17 +15,26 @@ import db from '../utils/db';
 import { Product } from '../models/product';
 import handleAddToCartFuncion from '../utils/handleAddToCart';
 import { useRouter } from 'next/router';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Store } from '../utils/Store';
+import { Alert, AlertTitle } from '@material-ui/lab';
+import useStyles from '../utils/styles';
 //props are coming from getServerSideProps
 function Home(props) {
   const { products } = props;
   const { state, dispatch } = useContext(Store);
   const router = useRouter();
-
+  const [alert, setAlert] = useState('');
+  const classess = useStyles();
   return (
     <div>
       <Layout>
+        {alert.message && (
+          <Alert className={classess.section} severity={alert.variant}>
+            <AlertTitle>Error</AlertTitle>
+            {alert.message}
+          </Alert>
+        )}
         <Grid container spacing={3}>
           {/*grid item will have 4 products
              for line on medium devices*/}
@@ -52,7 +61,13 @@ function Home(props) {
                   <Typography>${product.price}</Typography>
                   <Button
                     onClick={() =>
-                      handleAddToCartFuncion(dispatch, product, router, state)
+                      handleAddToCartFuncion(
+                        dispatch,
+                        product,
+                        router,
+                        state,
+                        setAlert
+                      )
                     }
                     size="small"
                     color="primary"

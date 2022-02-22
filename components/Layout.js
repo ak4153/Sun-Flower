@@ -163,7 +163,11 @@ export default function Layout({ children, title, description }) {
                   }}
                 >
                   <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
-                  <MenuItem onClick={handleCloseMenu}>My account</MenuItem>
+                  <MenuItem onClick={handleCloseMenu}>
+                    <NextLink passHref href={'/orderhistory'}>
+                      <Link>Order History</Link>
+                    </NextLink>
+                  </MenuItem>
                   <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>
               </>
