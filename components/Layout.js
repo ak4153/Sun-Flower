@@ -162,7 +162,11 @@ export default function Layout({ children, title, description }) {
                     'aria-labelledby': 'basic-button',
                   }}
                 >
-                  <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
+                  <MenuItem onClick={handleCloseMenu}>
+                    <NextLink passHref href={'/profile'}>
+                      <Link>Profile</Link>
+                    </NextLink>
+                  </MenuItem>
                   <MenuItem onClick={handleCloseMenu}>
                     <NextLink passHref href={'/orderhistory'}>
                       <Link>Order History</Link>

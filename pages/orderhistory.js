@@ -2,7 +2,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   Grid,
   Link,
   List,
@@ -30,7 +29,10 @@ function OrderHistory() {
   const { state } = useContext(Store);
   const { user } = state;
   const router = useRouter();
+  const [alert, setAlert] = useState('');
+
   useEffect(() => {
+    if (!user) router.push('/');
     axios
       .get('/api/orders/getorders', {
         headers: { authorization: `Bearer ${user.token}` },
@@ -38,7 +40,8 @@ function OrderHistory() {
       .then((result) => {
         setOrders(result.data);
         console.log(result.data);
-      });
+      })
+      .catch((err) => setAlert(err.message));
   }, []);
 
   return (
@@ -61,7 +64,9 @@ function OrderHistory() {
             <CardContent>
               <Typography>
                 <NextLink href={'/profile'}>
-                  <Link>Order History</Link>
+                  <Link>
+                    <strong>Order History</strong>
+                  </Link>
                 </NextLink>
               </Typography>
             </CardContent>
