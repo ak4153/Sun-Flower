@@ -31,6 +31,9 @@ const useStyles = makeStyles({
   grow: {
     flexGrow: 1,
   },
+  addPadding: {
+    padding: 10,
+  },
   //[slug] section of a product
   section: {
     marginTop: 20,

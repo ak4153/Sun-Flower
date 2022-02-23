@@ -44,6 +44,28 @@ const isAuth = async (req, res, next) => {
     jwt.verify(token, process.env.JWT_SECRET, (err, decodedData) => {
       if (err) {
         res.status(401).send({ message: 'token is not valid' });
+      } else if (decodedData.isAdmin) {
+        req.user = decodedData;
+        //carries on the request forward to the next middleware
+        next();
+      } else {
+        res.status(403).send({ message: 'Admin privileges required' });
+      }
+    });
+  } else {
+    res.status(401).send({ message: 'token is not supplied' });
+  }
+};
+const isAuthAdmin = async (req, res, next) => {
+  //req.headers is supplied by placeOder post request
+  const { authorization } = req.headers;
+  if (authorization) {
+    //Bearer xxxxxxx
+    //1234567xxxxxx
+    const token = authorization.slice(7, req.headers.authorization.length);
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedData) => {
+      if (err) {
+        res.status(401).send({ message: 'token is not valid' });
       } else {
         req.user = decodedData;
         //carries on the request forward to the next middleware
@@ -54,4 +76,4 @@ const isAuth = async (req, res, next) => {
     res.status(401).send({ message: 'token is not supplied' });
   }
 };
-export { signToken, isAuth };
+export { signToken, isAuth, isAuthAdmin };

@@ -172,6 +172,15 @@ export default function Layout({ children, title, description }) {
                       <Link>Order History</Link>
                     </NextLink>
                   </MenuItem>
+
+                  {state.user.isAdmin && (
+                    <MenuItem onClick={handleCloseMenu}>
+                      <NextLink passHref href={'/admin/dashboard'}>
+                        <Link>Admin Dashboard</Link>
+                      </NextLink>
+                    </MenuItem>
+                  )}
+
                   <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>
               </>
