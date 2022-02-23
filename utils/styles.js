@@ -11,9 +11,18 @@ const useStyles = makeStyles({
   main: {
     minHeight: '80vh',
   },
+
   footer: {
-    marginTop: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    flexFlow: 'row',
+    marginTop: 20,
     textAlign: 'center',
+  },
+  footerdiv: {
+    borderTop: '2px solid grey',
+    padding: 20,
+    width: '80%',
   },
   brand: {
     fontWeight: 'bold',

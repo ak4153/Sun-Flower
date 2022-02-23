@@ -1,6 +1,7 @@
 import nc from 'next-connect';
 import { Product } from '../../models/product';
 import { User } from '../../models/user';
+import { Order } from '../../models/Order';
 import data from '../../utils/data';
 import userData from '../../utils/userData';
 import db from '../../utils/db';
@@ -11,6 +12,7 @@ handler.get(async (req, res) => {
   await User.deleteMany();
   await User.insertMany(userData.users);
   await Product.deleteMany();
+  await Order.deleteMany();
   await Product.insertMany(data.products);
   await db.disconnect();
   res.send('seeded');

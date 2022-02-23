@@ -74,6 +74,7 @@ const reducer = (state, action) => {
       const user = action.payload;
       Cookies.remove('user');
       Cookies.remove('cartItems');
+      Cookies.remove('shippingData');
       return {
         ...state,
         user: '',

@@ -7,10 +7,12 @@ import { Order } from '../../../../models/Order';
 //middleware incase of an error
 const handler = nc({ onError });
 handler.use(isAuth);
+
 //[id] file name this one acts as /api/products/:productId
 handler.get(async (req, res) => {
+  console.log(req.user._id);
   db.connect();
-  const orders = await Order.find({});
+  const orders = await Order.find({ user: req.user._id });
   db.disconnect();
   if (orders) {
     return res.status(202).send(orders);

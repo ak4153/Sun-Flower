@@ -25,9 +25,11 @@ import Image from 'next/image';
 import dynamicSSR from '../utils/dynamicFunction';
 import axios from 'axios';
 import Router, { useRouter } from 'next/router';
+import useStyles from '../utils/styles';
 
 const CartScreen = () => {
   const { state, dispatch } = useContext(Store);
+  const classess = useStyles();
   const { cartItems } = state.cart;
   const router = useRouter();
   const handleRemoveCartItem = (item) => {
@@ -53,7 +55,7 @@ const CartScreen = () => {
   };
   return (
     <Layout title="Shopping Cart">
-      <Typography variant="h1" component="h1">
+      <Typography variant="h1" component="h1" className={classess.section}>
         Shopping Cart
       </Typography>
 

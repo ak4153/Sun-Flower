@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Grid,
   Link,
   List,
@@ -14,7 +15,7 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import Layout from '../components/Layout';
 import useStyles from '../utils/styles';
 import axios from 'axios';
@@ -23,8 +24,33 @@ import dynamicSSR from '../utils/dynamicFunction';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+function reducer(state, action) {
+  switch (action.type) {
+    case 'FETCH_REQUEST': {
+      return { ...state, loading: true, error: '' };
+    }
+    case 'FETCH_SUCCESS': {
+      return { ...state, orders: action.payload, loading: false, error: '' };
+    }
+    case 'FETCH_FAIL': {
+      return {
+        ...state,
+        orders: action.payload,
+        loading: false,
+        error: 'failed to fetch orders',
+      };
+    }
+    default:
+      state;
+  }
+}
+
 function OrderHistory() {
-  const [orders, setOrders] = useState([]);
+  const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
+    loading: false,
+    error: '',
+    orders: [],
+  });
   const classess = useStyles();
   const { state } = useContext(Store);
   const { user } = state;
@@ -32,13 +58,14 @@ function OrderHistory() {
   const [alert, setAlert] = useState('');
 
   useEffect(() => {
-    if (!user) router.push('/');
+    if (!user) router.push('/login');
+    dispatch({ type: 'FETCH_REQUEST' });
     axios
       .get('/api/orders/getorders', {
         headers: { authorization: `Bearer ${user.token}` },
       })
       .then((result) => {
-        setOrders(result.data);
+        dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
         console.log(result.data);
       })
       .catch((err) => setAlert(err.message));
@@ -82,6 +109,7 @@ function OrderHistory() {
             </CardContent>
 
             <List>
+              {loading && <CircularProgress />}
               <ListItem>
                 <TableContainer>
                   <Table>

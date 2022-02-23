@@ -180,7 +180,9 @@ export default function Layout({ children, title, description }) {
         </AppBar>
         <Container className={classes.main}>{children}</Container>
         <footer className={classes.footer}>
-          <Typography>All Rights Reserved. Sun Flower 2022</Typography>
+          <div className={classes.footerdiv}>
+            <Typography>All Rights Reserved. Sun Flower 2022</Typography>
+          </div>
         </footer>
       </ThemeProvider>
     </div>

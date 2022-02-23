@@ -70,8 +70,9 @@ function OrderHistory() {
     }
   };
   useEffect(() => {
-    if (!user) router.push('/');
-  });
+    if (!user) router.push('/login');
+  }, []);
+
   return (
     <Layout title="Profile">
       <form onSubmit={handleSubmit(onSubmit)}>

@@ -35,7 +35,7 @@ function Home(props) {
             {alert.message}
           </Alert>
         )}
-        <Grid container spacing={3}>
+        <Grid container spacing={3} className={classess.section}>
           {/*grid item will have 4 products
              for line on medium devices*/}
           {products.map((product) => (
