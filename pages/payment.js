@@ -58,6 +58,7 @@ function Payment() {
               <RadioGroup
                 aria-label="Payment Method"
                 name="paymentMethod"
+                defaultValue={'PayPal'}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               >
                 <FormControlLabel
