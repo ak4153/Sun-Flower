@@ -25,7 +25,7 @@ function Payment() {
   const [alert, setAlert] = useState('');
   const classess = useStyles();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!shippingData) {
       router.push('/shipping');
     } else {
