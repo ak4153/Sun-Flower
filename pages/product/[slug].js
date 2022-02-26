@@ -14,7 +14,7 @@ import NextLink from 'next/link';
 import Image from 'next/image';
 import useStyles from '../../utils/styles';
 import db from '../../utils/db';
-
+import Product from '../../models/product';
 import { useContext } from 'react';
 import handleAddToCartFuncion from '../../utils/handleAddToCart';
 import { Store } from '../../utils/Store';
