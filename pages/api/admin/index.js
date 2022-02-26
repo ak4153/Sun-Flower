@@ -1,10 +1,10 @@
 import nc from 'next-connect';
-import Order from '../../../models/Order';
+import Order from '../../../models/order';
 import { isAuthAdmin } from '../../../utils/auth';
 import db from '../../../utils/db';
 import { onError } from '../../../utils/error';
-import User from '../../../models/User';
-import Product from '../../../models/Product';
+import User from '../../../models/user';
+import Product from '../../../models/product';
 //middleware incase of an error
 const handler = nc({ onError });
 handler.use(isAuthAdmin);
