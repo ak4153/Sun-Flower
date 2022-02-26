@@ -12,7 +12,7 @@ import {
 import NextLink from 'next/link';
 import dynamicSSR from '../utils/dynamicFunction';
 import db from '../utils/db';
-import { Product } from '../models/product';
+
 import handleAddToCartFuncion from '../utils/handleAddToCart';
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
