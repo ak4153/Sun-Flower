@@ -64,7 +64,7 @@ function OrderHistory() {
   };
   useEffect(() => {
     if (!user) router.push('/login');
-  }, []);
+  });
 
   return (
     <Layout title="Profile">

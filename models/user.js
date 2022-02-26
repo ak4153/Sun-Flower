@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-const userSchema = new mongoose.Schema(
+import Mongoose from 'Mongoose';
+const userSchema = new Mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, index: true },
@@ -11,4 +11,4 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-export const User = mongoose.models.User || mongoose.model('User', userSchema);
+export const User = Mongoose.models.User || Mongoose.model('User', userSchema);

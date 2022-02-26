@@ -1,6 +1,6 @@
 import nc from 'next-connect';
 import { Order } from '../../../models/Order';
-import { isAuth, isAuthAdmin } from '../../../utils/auth';
+import { isAuthAdmin } from '../../../utils/auth';
 import db from '../../../utils/db';
 import { onError } from '../../../utils/error';
 import { User } from '../../../models/User';

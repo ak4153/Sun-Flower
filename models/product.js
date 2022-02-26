@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import Mongoose from 'Mongoose';
 
-const productSchema = new mongoose.Schema(
+const productSchema = new Mongoose.Schema(
   {
     price: { type: Number, required: true },
     name: { type: String, required: true },
@@ -19,4 +19,4 @@ const productSchema = new mongoose.Schema(
 );
 //if its already exists in the database dont create a new one
 export const Product =
-  mongoose.models.Product || mongoose.model('Product', productSchema);
+  Mongoose.models.Product || Mongoose.model('Product', productSchema);

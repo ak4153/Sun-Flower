@@ -51,7 +51,7 @@ function Shipping() {
     if (!state.user) {
       router.push('/login?redirect=/shipping');
     }
-  }, []);
+  });
 
   return (
     <Layout title="Signup">
