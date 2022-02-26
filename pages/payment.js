@@ -29,7 +29,9 @@ function Payment() {
     if (!shippingData) {
       router.push('/shipping');
     } else {
-      setPaymentMethod(JSON.parse(Cookies.get('paymentMethod')) || '');
+      JSON.parse(Cookies.get('paymentMethod'))
+        ? setPaymentMethod(JSON.parse(Cookies.get('paymentMethod')))
+        : setPaymentMethod('');
     }
   }, []);
 
