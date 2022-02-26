@@ -36,7 +36,7 @@ const LoginScreen = () => {
     if (user) {
       router.push('/');
     }
-  });
+  }, []);
 
   const onSubmit = (data) => {
     // e.preventDefault();

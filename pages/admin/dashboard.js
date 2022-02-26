@@ -114,7 +114,7 @@ function OrderHistory() {
       .catch((err) => {
         dispatch({ type: 'FETCH_FAIL' });
       });
-  });
+  }, []);
 
   return (
     <Layout title="Admin Dashboard">

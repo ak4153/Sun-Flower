@@ -32,7 +32,7 @@ function Payment() {
       console.log(Cookies.get('paymentMethod'));
       setPaymentMethod(JSON.parse(Cookies.get('paymentMethod')) || '');
     }
-  });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
