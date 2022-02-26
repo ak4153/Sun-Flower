@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import {
@@ -18,6 +18,7 @@ import Product from '../../models/product';
 import { useContext } from 'react';
 import handleAddToCartFuncion from '../../utils/handleAddToCart';
 import { Store } from '../../utils/Store';
+import Error from '../../components/Error';
 // import Cookies from 'js-cookie';
 // import axios from 'axios';
 
@@ -30,12 +31,14 @@ export default function ProductScreen(props) {
   const classes = useStyles();
   const { state, dispatch } = useContext(Store);
   const { product } = props;
+  const [alert, setAlert] = useState();
   if (!product) {
     return <div>Product Not Found</div>;
   }
 
   return (
     <Layout title={product.name} description={product.description}>
+      {alert && <Error message="Out of stock"></Error>}
       <div className={classes.section}>
         <NextLink href="/" passHref>
           <Link>
@@ -46,40 +49,45 @@ export default function ProductScreen(props) {
       {/*for small devices occupy whole width */}
       <Grid container spacing={1}>
         <Grid item md={6} xs={12}>
-          <Image
-            src={product.image}
-            alt={product.name}
-            width={640}
-            height={640}
-            layout="responsive"
-          />
+          <Card>
+            <Image
+              src={product.image}
+              alt={product.name}
+              width={640}
+              height={640}
+              layout="responsive"
+            />
+          </Card>
         </Grid>
+
         <Grid item md={3} xs={12}>
-          <List>
-            <ListItem>
-              {/*component h1, for seo */}
-              <Typography component="h1" variant="h1">
-                {product.name}
-              </Typography>
-            </ListItem>
-            <ListItem>
-              <Typography>Category:{product.category}</Typography>
-            </ListItem>
+          <Card>
+            <List>
+              <ListItem>
+                {/*component h1, for seo */}
+                <Typography component="h1" variant="h1">
+                  {product.name}
+                </Typography>
+              </ListItem>
+              <ListItem>
+                <Typography>Category: {product.category}</Typography>
+              </ListItem>
 
-            <ListItem>
-              <Typography>Brand:{product.brand}</Typography>
-            </ListItem>
+              <ListItem>
+                <Typography>Brand: {product.brand}</Typography>
+              </ListItem>
 
-            <ListItem>
-              <Typography>
-                Rating:{product.rating} stars ({product.numReviews}) reviews
-              </Typography>
-            </ListItem>
+              <ListItem>
+                <Typography>
+                  Rating: {product.rating} stars ({product.numReviews}) reviews
+                </Typography>
+              </ListItem>
 
-            <ListItem>
-              <Typography>Description:{product.description}</Typography>
-            </ListItem>
-          </List>
+              <ListItem>
+                <Typography>Description: {product.description}</Typography>
+              </ListItem>
+            </List>
+          </Card>
         </Grid>
         <Grid item md={3} xs={12}>
           <Card>
@@ -87,7 +95,7 @@ export default function ProductScreen(props) {
               <ListItem>
                 <Grid container>
                   <Grid item xs={6}>
-                    <Typography>price</Typography>
+                    <Typography>price:</Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography>${product.price}</Typography>
@@ -110,7 +118,13 @@ export default function ProductScreen(props) {
                   fullWidth
                   variant="contained"
                   onClick={() =>
-                    handleAddToCartFuncion(dispatch, product, router, state)
+                    handleAddToCartFuncion(
+                      dispatch,
+                      product,
+                      router,
+                      state,
+                      setAlert
+                    )
                   }
                 >
                   Add to cart

@@ -1,5 +1,13 @@
 import axios from 'axios';
-
+/**
+ *
+ * @param {*} dispatch
+ * @param {*} product
+ * @param {*} router
+ * @param {*} state
+ * @param {*} setAlert
+ * @returns
+ */
 const handleAddToCartFuncion = async (
   dispatch,
   product,

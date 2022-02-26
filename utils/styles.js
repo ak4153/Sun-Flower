@@ -48,5 +48,13 @@ const useStyles = makeStyles({
     textTransform: 'initial',
   },
   transparentBackground: { backgroundColor: 'transparent' },
+  indexCard: {
+    width: '300px',
+    height: '300px',
+  },
+  cardMedia: {
+    width: '100%',
+    height: '200px',
+  },
 });
 export default useStyles;

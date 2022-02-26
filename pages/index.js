@@ -36,18 +36,22 @@ function Home(props) {
             {alert.message}
           </Alert>
         )}
+        <Typography component="h1" variant="h1" className={classess.addPadding}>
+          Products
+        </Typography>
         <Grid container spacing={3} className={classess.section}>
           {/*grid item will have 4 products
              for line on medium devices*/}
           {products.map((product) => (
             <Grid item md={4} key={product.name}>
-              <Card>
+              <Card className={classess.indexCard}>
                 <NextLink href={`/product/${product.slug}`} passHref>
                   {/*CardActionArea will be converted to an <a></a>
                    and NextLink will pass a link to it
                     */}
                   <CardActionArea>
                     <CardMedia
+                      className={classess.cardMedia}
                       component="img"
                       image={product.image}
                       title={product.name}
