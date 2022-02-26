@@ -21,17 +21,13 @@ function Payment() {
   const { state, dispatch } = useContext(Store);
   const { shippingData } = state;
   const router = useRouter();
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('PayPal');
   const [alert, setAlert] = useState('');
   const classess = useStyles();
 
   useEffect(() => {
     if (!shippingData) {
       router.push('/shipping');
-    } else {
-      JSON.parse(Cookies.get('paymentMethod'))
-        ? setPaymentMethod(JSON.parse(Cookies.get('paymentMethod')))
-        : setPaymentMethod('');
     }
   }, []);
 
@@ -62,7 +58,7 @@ function Payment() {
               <RadioGroup
                 aria-label="Payment Method"
                 name="paymentMethod"
-                value={paymentMethod}
+                value={state.paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               >
                 <FormControlLabel
