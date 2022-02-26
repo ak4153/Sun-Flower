@@ -18,5 +18,6 @@ const productSchema = new mongoose.Schema(
   }
 );
 //if its already exists in the database dont create a new one
-export const Product =
+const Product =
   mongoose.models.Product || mongoose.model('Product', productSchema);
+export { Product };
