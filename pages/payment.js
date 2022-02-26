@@ -11,7 +11,7 @@ import {
 import { Alert, AlertTitle } from '@material-ui/lab';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-import React, { useContext, useLayoutEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CheckoutWizard from '../components/CheckoutWizard';
 import Layout from '../components/Layout';
 import dynamicSSR from '../utils/dynamicFunction';
@@ -29,7 +29,6 @@ function Payment() {
     if (!shippingData) {
       router.push('/shipping');
     } else {
-      console.log(Cookies.get('paymentMethod'));
       setPaymentMethod(JSON.parse(Cookies.get('paymentMethod')) || '');
     }
   }, []);
