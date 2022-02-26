@@ -58,7 +58,6 @@ function Payment() {
               <RadioGroup
                 aria-label="Payment Method"
                 name="paymentMethod"
-                value={state.paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               >
                 <FormControlLabel
