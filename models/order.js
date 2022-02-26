@@ -39,4 +39,4 @@ const orderSchema = new mongoose.Schema(
 );
 //if its already exists in the database dont create a new one
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
-export { Order };
+export default Order;

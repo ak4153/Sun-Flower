@@ -1,7 +1,7 @@
 import nc from 'next-connect';
-import { Product } from '../../models/product';
-import { User } from '../../models/user';
-import { Order } from '../../models/Order';
+import Product from '../../models/product';
+import User from '../../models/user';
+import Order from '../../models/Order';
 import data from '../../utils/data';
 import userData from '../../utils/userData';
 import db from '../../utils/db';

@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { User } from '../../../models/user';
+import User from '../../../models/user';
 import cors from 'cors';
 import db from '../../../utils/db';
 import bcrypt from 'bcryptjs';
