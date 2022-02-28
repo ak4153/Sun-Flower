@@ -27,6 +27,7 @@ import Layout from '../../components/Layout';
 import { Store } from '../../utils/Store';
 import NextLink from 'next/link';
 import Image from 'next/image';
+
 //this function treats the
 //Expected server HTML to contain a matching <span> in <a>.
 //error, which means: server side didnt render what the client did
@@ -38,6 +39,7 @@ import CheckoutWizard from '../../components/CheckoutWizard';
 import { getError } from '../../utils/error';
 import { Alert } from '@material-ui/lab';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import Error from '../../components/Error';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -83,18 +85,62 @@ function reducer(state, action) {
         successPay: false,
       };
     }
+    case 'DELIVER_REQUEST': {
+      return {
+        ...state,
+
+        loadingDeliver: true,
+      };
+    }
+    case 'DELIVER_SUCCESS': {
+      return {
+        ...state,
+        successDeliver: true,
+        loadingDeliver: false,
+      };
+    }
+    case 'DELIVER_FAIL': {
+      return {
+        ...state,
+        successDeliver: false,
+        loadingDeliver: false,
+        errorDeliver: 'Error delivering',
+      };
+    }
+    case 'DELIVER_RESET': {
+      return {
+        ...state,
+        successDeliver: false,
+        loadingDeliver: false,
+        errorDeliver: '',
+      };
+    }
   }
 }
 
 const Order = ({ params }) => {
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-  const [{ loading, error, order, paymentData, successPay }, dispatch] =
-    useReducer(reducer, {
-      loading: true,
-      order: {},
-      error: '',
-      paymentData: {},
-    });
+  const [
+    {
+      loading,
+      error,
+      order,
+      paymentData,
+      successPay,
+      successDeliver,
+      loadingDeliver,
+      errorDeliver,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: true,
+    order: {},
+    error: '',
+    paymentData: {},
+    successDeliver: false,
+    loadingDeliver: false,
+    errorDeliver: '',
+  });
   const orderId = params.id;
   const classess = useStyles();
   const { state } = useContext(Store);
@@ -121,10 +167,19 @@ const Order = ({ params }) => {
         setAlert({ message: getError(err), variant: 'danger' });
       }
     };
-    if (!order._id || successPay || (order._id && order._id !== orderId)) {
+    if (
+      !order._id ||
+      successPay ||
+      successDeliver ||
+      (order._id && order._id !== orderId)
+    ) {
       fetchOrder();
       if (successPay) {
         dispatch({ type: 'PAY_RESET' });
+      }
+      //if you wont reset the page will re-render infintly
+      if (successDeliver) {
+        dispatch({ type: 'DELIVER_RESET' });
       }
     } else {
       //paypal entry point
@@ -146,7 +201,7 @@ const Order = ({ params }) => {
       };
       loadPaypalScript();
     }
-  }, [order, successPay]);
+  }, [successDeliver, order, successPay]);
 
   //pay button>this FIRES
   function createOrder(data, actions) {
@@ -189,13 +244,39 @@ const Order = ({ params }) => {
     setAlert({ message: getError(err), variant: 'error' });
   }
 
+  const handleDeliver = () => {
+    dispatch({ type: 'DELIVER_REQUEST' });
+    axios
+      .put(
+        '/api/admin/deliverOrder',
+        { orderId: orderId },
+        {
+          headers: {
+            authorization: `Bearer ${state.user.token}`,
+          },
+        }
+      )
+      .then((result) => {
+        dispatch({ type: 'DELIVER_SUCCESS' });
+        setAlert({ message: result.message, variant: 'success' });
+      })
+      .catch((err) => {
+        dispatch({ type: 'DELIVER_FAIL' });
+        setAlert({ message: err.message, variant: 'error' });
+      });
+  };
+
   return (
     <Layout title={`Order ${orderId}`}>
       <Typography className={classess.section} variant="h1" component="h1">
         Order {orderId}
       </Typography>
-      {alert.message && <Alert severity={alert.variant}>{alert.message}</Alert>}
+
+      {alert && <Alert severity={alert.variant}>{alert.message}</Alert>}
+
       <CheckoutWizard activeStep={4}></CheckoutWizard>
+
+      {/* <Error message={alert.message} severity={alert.variant}></Error> */}
 
       {loading ? (
         <CircularProgress />
@@ -237,7 +318,7 @@ const Order = ({ params }) => {
                 <ListItem>
                   <Typography>
                     Payment status:{' '}
-                    {order.isPaid ? `P aid at ${order.paidAt}` : 'Not paid'}
+                    {order.isPaid ? `Paid at ${order.paidAt}` : 'Not paid'}
                   </Typography>
                 </ListItem>
               </List>
@@ -375,6 +456,36 @@ const Order = ({ params }) => {
                     </Grid>
                   </Grid>
                 </ListItem>
+                <ListItem>
+                  <Grid container>
+                    <Grid item xs={12}>
+                      {state.user.isAdmin &&
+                        order.isPaid &&
+                        (order.isDelivered ? (
+                          <>
+                            <Typography>
+                              <strong>Delivered at:</strong>
+                            </Typography>
+                            <Typography>
+                              <strong>{order.deliveredAt}</strong>
+                            </Typography>
+                          </>
+                        ) : loadingDeliver ? (
+                          <CircularProgress />
+                        ) : (
+                          <Button
+                            onClick={handleDeliver}
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                          >
+                            DELIVER ORDER
+                          </Button>
+                        ))}
+                    </Grid>
+                  </Grid>
+                </ListItem>
+
                 {!order.isPaid && (
                   <ListItem>
                     {isPending ? (
