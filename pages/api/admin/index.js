@@ -14,6 +14,7 @@ handler.get(async (req, res) => {
   const orders = await Order.find();
   const users = await User.countDocuments();
   const products = await Product.countDocuments();
+
   const orderPriceGroup = await Order.aggregate([
     {
       $group: {
@@ -24,7 +25,9 @@ handler.get(async (req, res) => {
   ]);
   await db.disconnect();
 
-  const totalPrice = orderPriceGroup.length > 0 ? orderPriceGroup[0].sales : 0;
+  const totalPrice =
+    orderPriceGroup.length > 0 ? orderPriceGroup[0].totalPrice : 0;
+
   const salesData = await Order.aggregate([
     {
       $group: {
@@ -33,7 +36,7 @@ handler.get(async (req, res) => {
       },
     },
   ]);
-  console.log(salesData);
+
   res.status(201).send({
     totalPrice: totalPrice,
     orders,

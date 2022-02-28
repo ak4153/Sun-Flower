@@ -34,7 +34,7 @@ const signToken = (user) => {
  * middleware for checking if auth token is supplied
  * returns decoded data inside req.use
  */
-const isAuth = async (req, res, next) => {
+const isAuthAdmin = async (req, res, next) => {
   //req.headers is supplied by placeOder post request
   const { authorization } = req.headers;
   if (authorization) {
@@ -56,7 +56,15 @@ const isAuth = async (req, res, next) => {
     res.status(401).send({ message: 'token is not supplied' });
   }
 };
-const isAuthAdmin = async (req, res, next) => {
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * middleware for checking if auth token is supplied
+ * returns decoded data inside req.use if user ==admin
+ */
+const isAuth = async (req, res, next) => {
   //req.headers is supplied by placeOder post request
   const { authorization } = req.headers;
   if (authorization) {
