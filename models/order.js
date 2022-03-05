@@ -28,7 +28,7 @@ const orderSchema = new mongoose.Schema(
     paidAt: { type: Date },
     deliveredAt: { type: Date },
     paymentResult: {
-      id: { type: String, unique: true },
+      id: { type: String },
       status: { type: String },
       email_address: { type: String },
     },

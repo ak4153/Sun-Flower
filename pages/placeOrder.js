@@ -16,7 +16,7 @@ import {
   Card,
   CircularProgress,
 } from '@material-ui/core';
-import React, { useContext, useLayoutEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { Store } from '../utils/Store';
 import NextLink from 'next/link';
@@ -76,7 +76,7 @@ const PlaceOrder = () => {
     }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!state.paymentMethod) {
       router.push('/payment');
     }

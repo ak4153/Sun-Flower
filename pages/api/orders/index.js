@@ -10,6 +10,8 @@ handler.use(isAuth);
 //[id] file name this one acts as /api/products/:productId
 handler.post(async (req, res) => {
   const newOrder = new Order({ ...req.body, user: req.user._id });
+  console.log(newOrder);
+
   await db.connect();
   const order = await newOrder.save();
   await db.disconnect();

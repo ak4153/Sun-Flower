@@ -8,7 +8,6 @@ import Order from '../../../../models/order';
 const handler = nc({ onError });
 handler.use(isAuth);
 
-//[id] file name this one acts as /api/products/:productId
 handler.get(async (req, res) => {
   console.log(req.user._id);
   db.connect();
