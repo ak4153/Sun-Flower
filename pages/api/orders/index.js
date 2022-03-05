@@ -9,9 +9,9 @@ const handler = nc({ onError });
 handler.use(isAuth);
 //[id] file name this one acts as /api/products/:productId
 handler.post(async (req, res) => {
-  const newOrder = new Order({ ...req.body, user: req.user._id });
-  console.log(newOrder);
   await db.connect();
+  const newOrder = new Order({ ...req.body, user: req.user._id });
+
   const order = await newOrder.save();
   await db.disconnect();
   res.status(200).send(order);

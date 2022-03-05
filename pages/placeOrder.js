@@ -50,6 +50,7 @@ const PlaceOrder = () => {
 
   const handlePlaceOrder = async (e) => {
     try {
+      console.log(state.user.token);
       setLoading(true);
       const { data } = await axios.post(
         '/api/orders/',
