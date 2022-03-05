@@ -36,7 +36,6 @@ function reducer(state, action) {
     case 'FETCH_FAIL': {
       return {
         ...state,
-        orders: '',
         loading: false,
         error: action.payload,
       };
