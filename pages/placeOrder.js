@@ -36,6 +36,7 @@ const PlaceOrder = () => {
   const { state, dispatch } = useContext(Store);
   const { cartItems } = state.cart;
   const { shippingData } = state;
+  const { user } = state;
   const router = useRouter();
   const [alert, setAlert] = useState();
   const [loading, setLoading] = useState();
@@ -50,7 +51,6 @@ const PlaceOrder = () => {
 
   const handlePlaceOrder = async (e) => {
     try {
-      console.log(state.user.token);
       setLoading(true);
       const { data } = await axios.post(
         '/api/orders/',
@@ -65,7 +65,7 @@ const PlaceOrder = () => {
         },
         {
           headers: {
-            authorization: `Bearer ${state.user.token}`,
+            authorization: `Bearer ${user.token}`,
           },
         }
       );

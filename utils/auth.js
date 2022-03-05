@@ -53,7 +53,7 @@ const isAuthAdmin = async (req, res, next) => {
       }
     });
   } else {
-    res.status(401).send({ message: 'token is not supplied' });
+    res.status(401).send({ message: 'admin token is not supplied' });
   }
 };
 /**
@@ -81,7 +81,7 @@ const isAuth = async (req, res, next) => {
       }
     });
   } else {
-    res.status(401).send({ message: 'token is not supplied' });
+    res.status(401).send({ message: 'user token is not supplied' });
   }
 };
 export { signToken, isAuth, isAuthAdmin };

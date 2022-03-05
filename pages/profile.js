@@ -45,7 +45,11 @@ function OrderHistory() {
             name: name,
             _id: user._id,
           },
-          { headers: { authorization: `Bearer ${user.token}` } }
+          {
+            headers: {
+              authorization: `Bearer ${user.token}`,
+            },
+          }
         )
         .then((result) => {
           setAlert({ message: 'Successfuly updated', variant: 'success' });
