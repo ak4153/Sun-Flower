@@ -108,7 +108,6 @@ function OrderHistory() {
         headers: { authorization: `Bearer ${user.token}` },
       })
       .then((result) => {
-        console.log(result.data.salesData[0]);
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       })
       .catch((err) => {

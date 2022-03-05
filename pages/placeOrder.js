@@ -65,7 +65,7 @@ const PlaceOrder = () => {
         },
         {
           headers: {
-            authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${user.token}`,
           },
         }
       )
@@ -78,24 +78,6 @@ const PlaceOrder = () => {
         setLoading(false);
         setAlert(getError(err));
       });
-
-    // const { data } = await axios.post(
-    //   '/api/orders/',
-    //   {
-    //     orderItems: cartItems,
-    //     shippingData,
-    //     paymentMethod: state.paymentMethod,
-    //     itemsPrice,
-    //     tax,
-    //     shippingPrice,
-    //     totalPrice,
-    //   },
-    //   {
-    //     headers: {
-    //       authorization: `Bearer ${user.token}`,
-    //     },
-    //   }
-    // );
   };
 
   useEffect(() => {

@@ -63,7 +63,7 @@ function OrderHistory() {
     dispatch({ type: 'FETCH_REQUEST' });
     axios
       .get('/api/admin/orders', {
-        headers: { authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${user.token}` },
       })
       .then((result) => {
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
