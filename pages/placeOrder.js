@@ -47,6 +47,7 @@ const PlaceOrder = () => {
   const tax = round2(itemsPrice * 0.17);
   const shippingPrice = 8;
   const totalPrice = shippingPrice + tax + itemsPrice;
+
   const handlePlaceOrder = async (e) => {
     try {
       setLoading(true);
@@ -81,7 +82,7 @@ const PlaceOrder = () => {
       router.push('/payment');
     }
     if (cartItems.length <= 0) router.push('/');
-  });
+  }, []);
   return (
     <Layout title="Place Order">
       <Typography className={classess.section} variant="h1" component="h1">
