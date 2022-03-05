@@ -7,7 +7,11 @@ import { Store } from '../utils/Store';
 import dynamicSSR from '../utils/dynamicFunction';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-
+/**
+ *
+ * @param {*} slected menu e.g {selected="Orders"}
+ * @returns
+ */
 function AdminSideBar({ selected }) {
   const classess = useStyles();
   const { state, dispatch } = useContext(Store);
@@ -17,7 +21,7 @@ function AdminSideBar({ selected }) {
   return (
     <>
       <Grid item xs={12} md={2}>
-        <Card>
+        <Card className={classess.section}>
           <CardContent>
             <Typography>
               <NextLink href={'/admin/dashboard'}>
@@ -31,12 +35,27 @@ function AdminSideBar({ selected }) {
               </NextLink>
             </Typography>
           </CardContent>
+
           <CardContent>
             <Typography>
               <NextLink href={'/admin/orders'}>
                 <Link>
                   {' '}
                   {selected === 'orders' ? <strong>Orders</strong> : 'Orders'}
+                </Link>
+              </NextLink>
+            </Typography>
+          </CardContent>
+          <CardContent>
+            <Typography>
+              <NextLink href={'/admin/products'}>
+                <Link>
+                  {' '}
+                  {selected === 'products' ? (
+                    <strong>Products</strong>
+                  ) : (
+                    'Products'
+                  )}
                 </Link>
               </NextLink>
             </Typography>

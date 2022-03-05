@@ -23,6 +23,7 @@ import { Store } from '../../utils/Store';
 import dynamicSSR from '../../utils/dynamicFunction';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import AdminSideBar from '../../components/AdminSideBar';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -79,26 +80,7 @@ function OrderHistory() {
         className={classess.section}
         justifyContent="center"
       >
-        <Grid item xs={12} md={2}>
-          <Card className={classess.section}>
-            <CardContent>
-              <Typography>
-                <NextLink href={'/admin/dashboard'}>
-                  <Link>Dashboard</Link>
-                </NextLink>
-              </Typography>
-            </CardContent>
-            <CardContent>
-              <Typography>
-                <NextLink href={'/profile'}>
-                  <Link>
-                    <strong>Order History</strong>
-                  </Link>
-                </NextLink>
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <AdminSideBar slected="orders"></AdminSideBar>
 
         <Grid item md={9} xs={12} className={classess.section}>
           <Card>
