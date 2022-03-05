@@ -37,6 +37,7 @@ const signToken = (user) => {
 const isAuthAdmin = async (req, res, next) => {
   //req.headers is supplied by placeOder post request
   const { authorization } = req.headers;
+
   if (authorization) {
     //Bearer xxxxxxx
     //1234567xxxxxx
@@ -66,7 +67,9 @@ const isAuthAdmin = async (req, res, next) => {
  */
 const isAuth = async (req, res, next) => {
   //req.headers is supplied by placeOder post request
+
   const { authorization } = req.headers;
+
   if (authorization) {
     //Bearer xxxxxxx
     //1234567xxxxxx

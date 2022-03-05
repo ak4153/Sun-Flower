@@ -9,6 +9,7 @@ const handler = nc({ onError });
 handler.use(isAuth);
 //[id] file name this one acts as /api/products/:productId
 handler.get(async (req, res) => {
+  console.log('here', req.query.id);
   const order = req.query.id;
   await db.connect();
   const foundOrder = await Order.findById(order);

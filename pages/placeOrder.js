@@ -50,9 +50,9 @@ const PlaceOrder = () => {
   const totalPrice = shippingPrice + tax + itemsPrice;
 
   const handlePlaceOrder = async (e) => {
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
+    setLoading(true);
+    axios
+      .post(
         '/api/orders/',
         {
           orderItems: cartItems,
@@ -68,14 +68,34 @@ const PlaceOrder = () => {
             authorization: `Bearer ${user.token}`,
           },
         }
-      );
-      dispatch({ type: 'CART_CLEAR' });
-      setLoading(false);
-      router.push(`/order/${data._id}`);
-    } catch (err) {
-      setLoading(false);
-      setAlert(getError(err));
-    }
+      )
+      .then((result) => {
+        dispatch({ type: 'CART_CLEAR' });
+        setLoading(false);
+        router.push(`/order/${result.data._id}`);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setAlert(getError(err));
+      });
+
+    // const { data } = await axios.post(
+    //   '/api/orders/',
+    //   {
+    //     orderItems: cartItems,
+    //     shippingData,
+    //     paymentMethod: state.paymentMethod,
+    //     itemsPrice,
+    //     tax,
+    //     shippingPrice,
+    //     totalPrice,
+    //   },
+    //   {
+    //     headers: {
+    //       authorization: `Bearer ${user.token}`,
+    //     },
+    //   }
+    // );
   };
 
   useEffect(() => {
