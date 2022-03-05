@@ -9,8 +9,6 @@ const handler = nc({ onError });
 handler.use(isAuth);
 //[id] file name this one acts as /api/products/:productId
 handler.put(async (req, res) => {
-  //TODO > LOGIC FOR REMOVING STOCK
-  //* UPDATE PAYED STATUS
   const { details, orderId } = req.body;
 
   if (details.status === 'COMPLETED') {

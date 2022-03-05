@@ -23,6 +23,7 @@ import { Store } from '../utils/Store';
 import dynamicSSR from '../utils/dynamicFunction';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import Error from '../components/Error';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -35,9 +36,9 @@ function reducer(state, action) {
     case 'FETCH_FAIL': {
       return {
         ...state,
-        orders: action.payload,
+        orders: '',
         loading: false,
-        error: 'failed to fetch orders',
+        error: action.payload,
       };
     }
     default:
@@ -68,11 +69,15 @@ function OrderHistory() {
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
         console.log(result.data);
       })
-      .catch((err) => setAlert(err.message));
+      .catch((err) => {
+        dispatch({ type: 'FETCH_FAIL', payload: err.message });
+        setAlert(err.message);
+      });
   }, []);
 
   return (
     <Layout title="Order History">
+      {alert && <Error message={alert}></Error>}
       <Grid
         spacing={1}
         container
