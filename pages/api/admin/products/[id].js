@@ -5,7 +5,7 @@ import { isAuthAdmin } from '../../../../utils/auth';
 import { onError } from '../../../../utils/error';
 const handler = nc({ onError });
 handler.use(isAuthAdmin);
-handler.post(async (req, res) => {
+handler.put(async (req, res) => {
   const {
     productId,
     name,
@@ -30,10 +30,10 @@ handler.post(async (req, res) => {
     product.countInStock = countInStock;
     await product.save();
     await db.disconnect();
-    return res.status(202).send(product);
+    return res.status(202).send({ message: 'Product updated successfully' });
   } else {
     await db.disconnect();
-    return res.status(500).send({ message: 'could not fetch product' });
+    return res.status(404).send({ message: 'could not update product' });
   }
 });
 
