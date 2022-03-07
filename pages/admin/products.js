@@ -37,9 +37,35 @@ function reducer(state, action) {
     case 'FETCH_FAIL': {
       return {
         ...state,
-        products: action.payload,
+        products: [],
         loading: false,
         error: 'failed to fetch products',
+      };
+    }
+
+    case 'DELETE_REQUEST': {
+      return {
+        ...state,
+        deleteLoading: true,
+        deleteError: '',
+        deleteSuccess: false,
+      };
+    }
+    case 'DELETE_SUCCESS': {
+      return {
+        ...state,
+
+        deleteLoading: false,
+        deleteError: '',
+        deleteSuccess: true,
+      };
+    }
+    case 'DELETE_FAIL': {
+      return {
+        ...state,
+
+        deleteLoading: false,
+        deleteError: 'failed to delete product',
       };
     }
     default:
@@ -48,10 +74,16 @@ function reducer(state, action) {
 }
 
 function ProductsHistory() {
-  const [{ loading, error, products }, dispatch] = useReducer(reducer, {
+  const [
+    { loading, error, products, deleteLoading, deleteError, deleteSuccess },
+    dispatch,
+  ] = useReducer(reducer, {
     loading: false,
     error: '',
     products: [],
+    deleteLoading: false,
+    deleteError: '',
+    deleteSuccess: false,
   });
   const classess = useStyles();
   const { state } = useContext(Store);
@@ -60,7 +92,7 @@ function ProductsHistory() {
   const [alert, setAlert] = useState('');
 
   useEffect(() => {
-    if (!user) router.push('/login');
+    if (!user && !user.isAdmin) router.push('/login');
     dispatch({ type: 'FETCH_REQUEST' });
     axios
       .get('/api/admin/products', {
@@ -70,7 +102,24 @@ function ProductsHistory() {
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       })
       .catch((err) => setAlert(err.message));
-  }, []);
+  }, [deleteSuccess]);
+
+  const handleDeleteProduct = (productId) => {
+    console.log(productId);
+    if (!user && !user.isAdmin) router.push('/login');
+    dispatch({ type: 'DELETE_REQUEST' });
+    axios
+      .delete(`/api/admin/products/delete/?id=${productId}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      })
+      .then((result) => {
+        dispatch({ type: 'DELETE_SUCCESS' });
+      })
+      .catch((err) => {
+        dispatch({ type: 'DELETE_FAIL' });
+        setAlert(err.message);
+      });
+  };
 
   return (
     <Layout title="product History">
@@ -86,9 +135,25 @@ function ProductsHistory() {
         <Grid item md={9} xs={12} className={classess.section}>
           <Card>
             <CardContent>
-              <Typography component="h1" variant="h1">
-                Products
-              </Typography>
+              <Grid container spacing={2} wrap="nowrap">
+                <Grid item xs={12}>
+                  <Typography component="h1" variant="h1">
+                    Products
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    onClick={() =>
+                      router.push('/admin/products/createnewproduct')
+                    }
+                  >
+                    Create new product
+                  </Button>
+                </Grid>
+              </Grid>
             </CardContent>
 
             <List>
@@ -131,16 +196,20 @@ function ProductsHistory() {
                                 </Button>
                               </Grid>
                               <Grid item>
-                                <Button
-                                  onClick={() =>
-                                    router.push(`/admin/product/${product._id}`)
-                                  }
-                                  size="small"
-                                  variant="contained"
-                                  color="secondary"
-                                >
-                                  DELETE
-                                </Button>
+                                {deleteLoading ? (
+                                  <CircularProgress />
+                                ) : (
+                                  <Button
+                                    onClick={() =>
+                                      handleDeleteProduct(product._id)
+                                    }
+                                    size="small"
+                                    variant="contained"
+                                    color="secondary"
+                                  >
+                                    DELETE
+                                  </Button>
+                                )}
                               </Grid>
                             </Grid>
                           </TableCell>
