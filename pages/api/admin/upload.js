@@ -12,11 +12,10 @@ export const config = {
     bodyParser: false,
   },
 };
-
 cloudinary.config({
-  cloud_name: 'de8ca80ao',
-  api_key: '166421373376962',
-  api_secret: 'UwOkhRfod1x1Qk5r1T4QeYG4wgw',
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const handler = nextConnect({ onError });
@@ -31,7 +30,7 @@ handler.use(isAuthAdmin, upload.single('file')).post(async (req, res) => {
           reject(error);
         }
       });
-      console.log(stream);
+
       streamifier.createReadStream(req.file.buffer).pipe(stream);
     });
   };
