@@ -165,7 +165,6 @@ function ProductsHistory() {
     <Layout title="Edit Product">
       <form onSubmit={handleSubmit(onSubmit)}>
         {alert && <Error message={alert}></Error>}
-
         <Grid
           spacing={1}
           container

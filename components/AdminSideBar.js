@@ -60,6 +60,16 @@ function AdminSideBar({ selected }) {
               </NextLink>
             </Typography>
           </CardContent>
+          <CardContent>
+            <Typography>
+              <NextLink href={'/admin/users'}>
+                <Link>
+                  {' '}
+                  {selected === 'users' ? <strong>Users</strong> : 'Users'}
+                </Link>
+              </NextLink>
+            </Typography>
+          </CardContent>
         </Card>
       </Grid>
     </>

@@ -152,7 +152,12 @@ function OrderHistory() {
                     </Typography>
                   </CardContent>
                   <CardContent>
-                    <Button fullWidth variant="contained" color="primary">
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      onClick={() => router.push('/admin/sales')}
+                    >
                       DETAILS
                     </Button>
                   </CardContent>
@@ -172,7 +177,12 @@ function OrderHistory() {
                     </Typography>
                   </CardContent>
                   <CardContent>
-                    <Button fullWidth variant="contained" color="primary">
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      onClick={() => router.push('/admin/orders')}
+                    >
                       DETAILS
                     </Button>
                   </CardContent>
@@ -192,7 +202,12 @@ function OrderHistory() {
                     </Typography>
                   </CardContent>
                   <CardContent>
-                    <Button fullWidth variant="contained" color="primary">
+                    <Button
+                      onClick={() => router.push('/admin/products')}
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                    >
                       DETAILS
                     </Button>
                   </CardContent>
@@ -211,7 +226,12 @@ function OrderHistory() {
                     </Typography>
                   </CardContent>
                   <CardContent>
-                    <Button fullWidth variant="contained" color="primary">
+                    <Button
+                      onClick={() => router.push('/admin/users')}
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                    >
                       DETAILS
                     </Button>
                   </CardContent>
