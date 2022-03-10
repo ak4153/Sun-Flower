@@ -19,8 +19,7 @@ import { useContext } from 'react';
 import handleAddToCartFuncion from '../../utils/handleAddToCart';
 import { Store } from '../../utils/Store';
 import Error from '../../components/Error';
-// import Cookies from 'js-cookie';
-// import axios from 'axios';
+import CostumerReview from '../../components/CostumerReview.js';
 
 //this works as follows:
 //you have a hyper link to /product/:slug
@@ -134,6 +133,7 @@ export default function ProductScreen(props) {
           </Card>
         </Grid>
       </Grid>
+      <CostumerReview productId={product._id}></CostumerReview>
     </Layout>
   );
 }

@@ -17,6 +17,7 @@ import Layout from '../components/Layout';
 import dynamicSSR from '../utils/dynamicFunction';
 import { Store } from '../utils/Store';
 import useStyles from '../utils/styles';
+
 function Payment() {
   const { state, dispatch } = useContext(Store);
   const { shippingData } = state;

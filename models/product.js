@@ -12,6 +12,11 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true },
     countInStock: { type: Number, required: true, default: 0 },
     category: { type: String, required: true },
+    // reviews: [
+    //   {
+    //     id: { type: mongoose.Types.ObjectId },
+    //   },
+    // ],
   },
   {
     timestamps: true,

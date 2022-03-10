@@ -24,6 +24,7 @@ import AdminSideBar from '../../components/AdminSideBar';
 import Error from '../../components/Error';
 import Chart from '../../components/Chart';
 import { DateTime } from 'luxon';
+
 function reducer(state, action) {
   switch (action.type) {
     case 'FETCH_REQUEST': {
