@@ -43,6 +43,7 @@ const reducer = (state, action) => {
       };
     }
     case 'POST_FAIL': {
+      console.log(action.payload);
       return { ...state, postLoading: false, postError: action.payload };
     }
 
@@ -57,6 +58,7 @@ const reducer = (state, action) => {
       };
     }
     case 'DELETE_FAIL': {
+      console.log(action.payload);
       return { ...state, deleteLoading: false, deleteError: action.payload };
     }
     default:
@@ -131,31 +133,35 @@ function CostumerReview({ productId }) {
           console.log('post', result.data);
           dispatch({ type: 'POST_SUCCESS' });
         })
-        .catch((err) => dispatch({ type: 'POST_FAIL', payload: err.message }));
+        .catch((err) => {
+          dispatch({ type: 'POST_FAIL', payload: err.response.data.message });
+        });
     } else {
       dispatch({ type: 'POST_FAIL', payload: 'Fill in the Comment/Rating' });
     }
   }
+
   const handleReviewDelete = (_id) => {
     dispatch({ type: 'DELETE_REQUEST' });
+    console.log(_id);
     axios
-      .delete(
-        '/api/reviews',
-        { data: { reviewId: _id } },
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        }
-      )
+      .delete('/api/reviews', {
+        data: { reviewId: _id },
+        headers: { Authorization: `Bearer ${user.token}` },
+      })
       .then((result) => {
         dispatch({ type: 'DELETE_SUCCESS' });
       })
       .catch((err) => {
-        dispatch({ type: 'DELETE_FAIL', payload: err.message });
+        dispatch({ type: 'DELETE_FAIL', payload: err.response.data });
       });
   };
   return (
     <form onSubmit={(e) => handleReviewSubmit(e)}>
-      <Error message={error || postError} severity="error"></Error>
+      <Error
+        message={error || postError || deleteError}
+        severity="error"
+      ></Error>
       {loading && <CircularProgress />}
       <Grid container spacing={2}>
         {reviews.map((review) => (

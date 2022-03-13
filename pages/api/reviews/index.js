@@ -24,32 +24,35 @@ handler.post(async (req, res) => {
     productId,
     emailOfReviewer,
   } = req.body;
-  await db.connect();
+  try {
+    await db.connect();
 
-  if (exisitingReview) {
-    const foundReview = await Review.findById(exisitingReview);
-    foundReview.review = review;
-    foundReview.stars = stars;
-    await foundReview.save();
-    return res.status(202).send(foundReview);
+    if (exisitingReview) {
+      const foundReview = await Review.findById(exisitingReview);
+      foundReview.review = review;
+      foundReview.stars = stars;
+      await foundReview.save();
+      return res.status(202).send(foundReview);
+    }
+
+    const newReview = new Review({
+      nameOfReviewer: nameOfReviewer,
+      review: review,
+      stars: stars,
+      productId: productId,
+      emailOfReviewer: emailOfReviewer,
+    });
+    await newReview.save();
+    await db.disconnect();
+    res.status(202).send(newReview);
+  } catch (error) {
+    res.status(404).send({ message: "couldn't create/update review" });
   }
-
-  const newReview = new Review({
-    nameOfReviewer: nameOfReviewer,
-    review: review,
-    stars: stars,
-    productId: productId,
-    emailOfReviewer: emailOfReviewer,
-  });
-  await newReview.save();
-  await db.disconnect();
-  res.status(202).send(newReview);
 });
+
 handler.delete(async (req, res) => {
-  console.log(req.body.reviewId);
   await db.connect();
   const reviewToDelete = await Review.findByIdAndDelete(req.body.reviewId);
-
   await db.disconnect();
   res.status(202).send(reviewToDelete);
 });

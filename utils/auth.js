@@ -69,7 +69,7 @@ const isAuth = async (req, res, next) => {
   //req.headers is supplied by placeOder post request
 
   const { authorization } = req.headers;
-  console.log(authorization);
+  console.log('authorization', authorization);
   if (authorization) {
     //Bearer xxxxxxx
     //1234567xxxxxx
