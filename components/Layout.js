@@ -13,14 +13,22 @@ import {
   Button,
   Menu,
   MenuItem,
+  ListItem,
+  List,
+  Divider,
 } from '@material-ui/core';
+
 import useStyles from '../utils/styles';
 import NextLink from 'next/link';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { Store } from '../utils/Store';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-
+import { Box, IconButton } from '@mui/material';
+import MenuIcon from '@material-ui/icons/Menu';
+import Cancel from '@material-ui/icons/Cancel';
+import { Drawer } from '@mui/material';
+import axios from 'axios';
 export default function Layout({ children, title, description }) {
   const classes = useStyles();
   //const value = { state, dispatch };
@@ -31,7 +39,15 @@ export default function Layout({ children, title, description }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
   const open = Boolean(anchorEl);
-
+  const classess = useStyles();
+  const [sideBarVisible, setSideBarVisible] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const sideBarOpenHandler = () => {
+    setSideBarVisible(true);
+  };
+  const sideBarCloseHandler = () => {
+    setSideBarVisible(false);
+  };
   const handleClickMenu = (e) => {
     console.log(e.currentTarget);
     setAnchorEl(e.currentTarget);
@@ -50,7 +66,12 @@ export default function Layout({ children, title, description }) {
     const newDarkMode = !darkMode;
     Cookies.set('darkMode', newDarkMode ? 'ON' : 'OFF');
   };
-
+  useEffect(() => {
+    axios
+      .get('/api/products/categories')
+      .then((res) => setCategories(res.data))
+      .catch((err) => console.log(err));
+  }, []);
   //wrap elements you want to provide the theme for
   //with <ThemeProvider theme={theme}>{children}</ThemeProvider>
   //then go to the children and add <Child variant=<class>/>
@@ -99,6 +120,15 @@ export default function Layout({ children, title, description }) {
         <AppBar position="static" className={classes.navbar}>
           {/*NavBar */}
           <Toolbar>
+            <Box display="flex" alignItems="center">
+              <IconButton
+                onClick={sideBarOpenHandler}
+                edge="start"
+                aria-label="open drawer"
+              >
+                <MenuIcon className={classess.navabarButton} />
+              </IconButton>
+            </Box>
             {/*NextLink is passing passHref
            for the Link to recieve it */}
             <NextLink href="/" passHref>
@@ -106,24 +136,64 @@ export default function Layout({ children, title, description }) {
                 <Typography className={classes.brand}>Sun Flower</Typography>
               </Link>
             </NextLink>
+
+            <Drawer
+              anchor="left"
+              open={sideBarVisible}
+              onClose={sideBarCloseHandler}
+              className={classess.siderBar}
+            >
+              <List>
+                <ListItem>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Typography>Shop by category</Typography>
+                    <IconButton
+                      aria-label="close"
+                      onClick={sideBarCloseHandler}
+                    >
+                      <Cancel />
+                    </IconButton>
+                  </Box>
+                </ListItem>
+                <Divider light />
+                {categories.map((cat) => (
+                  <ListItem key={cat}>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography>{cat}</Typography>
+                    </Box>
+                  </ListItem>
+                ))}
+              </List>
+            </Drawer>
+
             <div className={classes.grow}></div>
             <Switch checked={mode} onChange={darkModeChangeHandler}></Switch>
             <div>
               <NextLink href="/cart" passHref>
                 <Link>
-                  {cart.cartItems.length > 0 ? (
-                    <Badge
-                      color="secondary"
-                      badgeContent={cart.cartItems.reduce(
-                        (acc, curr) => acc + curr.quantity,
-                        0
-                      )}
-                    >
-                      Cart
-                    </Badge>
-                  ) : (
-                    'Cart'
-                  )}
+                  <Typography component="span">
+                    {cart.cartItems.length > 0 ? (
+                      <Badge
+                        color="secondary"
+                        badgeContent={cart.cartItems.reduce(
+                          (acc, curr) => acc + curr.quantity,
+                          0
+                        )}
+                      >
+                        Cart
+                      </Badge>
+                    ) : (
+                      'Cart'
+                    )}
+                  </Typography>
                 </Link>
               </NextLink>
             </div>
@@ -131,12 +201,16 @@ export default function Layout({ children, title, description }) {
               <>
                 <div>
                   <NextLink href="/login" passHref>
-                    <Link>Login</Link>
+                    <Link>
+                      <Typography component="span">Login</Typography>
+                    </Link>
                   </NextLink>
                 </div>
                 <div>
                   <NextLink href="/signup" passHref>
-                    <Link>Signup</Link>
+                    <Link>
+                      <Typography component="span">Signup</Typography>
+                    </Link>
                   </NextLink>
                 </div>
               </>

@@ -62,6 +62,9 @@ function SignupScreen() {
         <Typography component="h1" variant="h1">
           Signup
         </Typography>
+        <Typography component="h2" variant="h2">
+          For admin privileges login with : test@test.com | 123456
+        </Typography>
         {alert && (
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>

@@ -44,7 +44,7 @@ const LoginScreen = () => {
     // const password = e.target[2].value;
     const password = data.password;
     const email = data.email;
-    console.log(password, email);
+
     axios
       .post('/api/users/login', {
         email: email,
@@ -67,6 +67,9 @@ const LoginScreen = () => {
       <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
         <Typography component="h1" variant="h1">
           Login
+        </Typography>
+        <Typography component="h2" variant="h2">
+          For admin privileges login with : test@test.com | 123456
         </Typography>
         {alert && (
           <Alert severity="error">
