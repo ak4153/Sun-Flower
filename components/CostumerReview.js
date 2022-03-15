@@ -16,6 +16,8 @@ import ReactStars from 'react-rating-stars-component';
 import { Store } from '../utils/Store';
 import { StarRating } from 'react-star-rating-element';
 import dynamicSSR from '../utils/dynamicFunction';
+import useStyles from '../utils/styles';
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_REQUEST': {
@@ -68,7 +70,7 @@ const reducer = (state, action) => {
 /** displays reviews for a product
  * @param review object
  */
-function CostumerReview({ productId }) {
+function CostumerReview({ productId, setRenderSuccess }) {
   const [
     {
       reviews,
@@ -89,15 +91,19 @@ function CostumerReview({ productId }) {
     deleteLoading: false,
     deleteError: '',
   });
+  const classes = useStyles();
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(null);
   const { state } = useContext(Store);
   const { user } = state;
+
   useEffect(() => {
     dispatch({ type: 'FETCH_REQUEST' });
     axios
       .get(`/api/reviews/${productId}`)
       .then((result) => {
+        //for the [slug].js
+
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       })
       .catch((err) => dispatch({ type: 'FETCH_FAIL', payload: err.message }));
@@ -105,14 +111,16 @@ function CostumerReview({ productId }) {
 
   function handleReviewSubmit(e) {
     e.preventDefault();
-
     if (comment.length > 0 && rating) {
       dispatch({ type: 'POST_REQUEST' });
-      let exisitingReview = null;
-      reviews.map((review) => {
-        if (review.emailOfReviewer === user.email)
-          return (exisitingReview = review._id);
-      });
+      let exisitingReview = { reviewId: '', productId: '' };
+      reviews &&
+        reviews.map((review) => {
+          if (review.user === user._id) {
+            exisitingReview.productId = productId;
+            exisitingReview.reviewId = review._id;
+          }
+        });
 
       axios
         .post(
@@ -122,7 +130,7 @@ function CostumerReview({ productId }) {
             review: comment,
             stars: rating,
             productId: productId,
-            emailOfReviewer: user.email,
+            user: user._id,
             exisitingReview: exisitingReview,
           },
           {
@@ -130,7 +138,7 @@ function CostumerReview({ productId }) {
           }
         )
         .then((result) => {
-          console.log('post', result.data);
+          setRenderSuccess(true);
           dispatch({ type: 'POST_SUCCESS' });
         })
         .catch((err) => {
@@ -141,110 +149,131 @@ function CostumerReview({ productId }) {
     }
   }
 
-  const handleReviewDelete = (_id) => {
+  const handleReviewDelete = (review_id, product_id) => {
     dispatch({ type: 'DELETE_REQUEST' });
-    console.log(_id);
+
     axios
       .delete('/api/reviews', {
-        data: { reviewId: _id },
+        data: { review_id: review_id, product_id: product_id },
         headers: { Authorization: `Bearer ${user.token}` },
       })
       .then((result) => {
+        console.log('aa', result.data);
         dispatch({ type: 'DELETE_SUCCESS' });
       })
       .catch((err) => {
         dispatch({ type: 'DELETE_FAIL', payload: err.response.data });
       });
   };
+
   return (
-    <form onSubmit={(e) => handleReviewSubmit(e)}>
+    <form className={classes.section} onSubmit={(e) => handleReviewSubmit(e)}>
       <Error
         message={error || postError || deleteError}
         severity="error"
       ></Error>
       {loading && <CircularProgress />}
-      <Grid container spacing={2}>
-        {reviews.map((review) => (
-          <Grid item xs={6} key={review._id}>
-            <Card>
-              <Grid container spacing={3} alignItems="center">
-                <Grid item xs={3}>
-                  <List>
-                    <ListItem>Author: {review.nameOfReviewer}</ListItem>
-                    <ListItem>Date: {review.createdAt}</ListItem>
-                  </List>
+      <Typography variant="h2" component="h2" className={classes.section}>
+        Reviews
+      </Typography>
+      <Grid container spacing={3}>
+        {reviews
+          ? reviews.map((review) => (
+              <Grid item xs={12} md={6} key={review._id}>
+                <Card>
+                  <Grid container spacing={1} alignItems="center">
+                    <Grid item xs={12} md={4}>
+                      <List>
+                        <ListItem>Author: {review.nameOfReviewer}</ListItem>
+                        <ListItem>Date: {review.createdAt}</ListItem>
+                      </List>
+                    </Grid>
+
+                    <Grid item xs={12} md={4}>
+                      <List>
+                        <ListItem>
+                          <StarRating
+                            ratingValue={review.stars}
+                            changeRating={() => review.stars}
+                          />
+                        </ListItem>
+                        <ListItem>{review.review}</ListItem>
+                      </List>
+                    </Grid>
+                    <Grid item xs={12} md={1}>
+                      {user._id === review.user && (
+                        <Button
+                          onClick={() =>
+                            handleReviewDelete(review._id, productId)
+                          }
+                          color="secondary"
+                        >
+                          Delete Comment
+                        </Button>
+                      )}
+                    </Grid>
+                  </Grid>
+                </Card>
+              </Grid>
+            ))
+          : ''}
+        {user ? (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h2"
+                    component="h2"
+                    className={classes.section}
+                  >
+                    Leave Your Comment
+                  </Typography>
                 </Grid>
 
-                <Grid item xs={3}>
-                  <List>
-                    <ListItem>
-                      <StarRating
-                        ratingValue={review.stars}
-                        changeRating={() => review.stars}
-                      />
-                    </ListItem>
-                    <ListItem>{review.review}</ListItem>
-                  </List>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    id="comment"
+                    label="Comment..."
+                    fullWidth
+                    variant="outlined"
+                    type="text"
+                    error={comment.length < 1}
+                    onChange={(e) =>
+                      setComment((prevState) => (prevState = e.target.value))
+                    }
+                  />
                 </Grid>
-                <Grid item>
-                  {user.email === review.emailOfReviewer && (
+                <Grid item xs={12}>
+                  <ReactStars
+                    count={5}
+                    onChange={(newRating) =>
+                      setRating((prevState) => (prevState = newRating))
+                    }
+                    size={24}
+                    activeColor="#ffd700"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  {postLoading ? (
+                    <CircularProgress />
+                  ) : (
                     <Button
-                      onClick={() => handleReviewDelete(review._id)}
                       variant="contained"
-                      color="secondary"
+                      color="primary"
+                      fullWidth
+                      type="submit"
                     >
-                      Delete Comment
+                      COMMENT
                     </Button>
                   )}
                 </Grid>
               </Grid>
-            </Card>
-          </Grid>
-        ))}
-
-        <Grid item xs={12}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography variant="h2" component="h2">
-                Leave Your Comment
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <TextField
-                id="comment"
-                label="Comment..."
-                fullWidth
-                variant="outlined"
-                type="text"
-                error={comment.length < 1}
-                onChange={(e) =>
-                  setComment((prevState) => (prevState = e.target.value))
-                }
-              />
             </Grid>
           </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <ReactStars
-            count={5}
-            onChange={(newRating) =>
-              setRating((prevState) => (prevState = newRating))
-            }
-            size={24}
-            activeColor="#ffd700"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          {postLoading ? (
-            <CircularProgress />
-          ) : (
-            <Button variant="contained" color="primary" fullWidth type="submit">
-              COMMENT
-            </Button>
-          )}
-        </Grid>
+        ) : (
+          ''
+        )}
       </Grid>
     </form>
   );

@@ -92,7 +92,7 @@ function Home(props) {
 //data us accessible as props
 export async function getServerSideProps() {
   await db.connect();
-  var products = await Product.find({}).lean();
+  var products = await Product.find({}, '-reviews').lean();
   //pay close attention to .lean() which converts the document from mongodb
   //to a smaller javascript object
   //then we need to convert the _id,createdAt,updatedAt fields to string from plain objects

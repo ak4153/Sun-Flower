@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import {
@@ -10,11 +10,13 @@ import {
   Card,
   Button,
 } from '@material-ui/core';
+import { StarRating } from 'react-star-rating-element';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import useStyles from '../../utils/styles';
 import db from '../../utils/db';
 import Product from '../../models/product';
+// import Review from '../../models/product';
 import { useContext } from 'react';
 import handleAddToCartFuncion from '../../utils/handleAddToCart';
 import { Store } from '../../utils/Store';
@@ -31,6 +33,9 @@ export default function ProductScreen(props) {
   const { state, dispatch } = useContext(Store);
   const { product } = props;
   const [alert, setAlert] = useState();
+  //passing to costumer review component
+  //for props
+  const [renderSuccess, setRenderSuccess] = useState(false);
   if (!product) {
     return <div>Product Not Found</div>;
   }
@@ -75,13 +80,15 @@ export default function ProductScreen(props) {
               <ListItem>
                 <Typography>Brand: {product.brand}</Typography>
               </ListItem>
-
               <ListItem>
-                <Typography>
-                  Rating: {product.rating} stars ({product.numReviews}) reviews
-                </Typography>
+                <Typography>Reviews: {product.numReviews}</Typography>
               </ListItem>
-
+              <ListItem>
+                <StarRating
+                  ratingValue={product.rating}
+                  changeRating={() => product.rating}
+                />
+              </ListItem>
               <ListItem>
                 <Typography>Description: {product.description}</Typography>
               </ListItem>
@@ -133,7 +140,10 @@ export default function ProductScreen(props) {
           </Card>
         </Grid>
       </Grid>
-      <CostumerReview productId={product._id}></CostumerReview>
+      <CostumerReview
+        setRenderSuccess={setRenderSuccess}
+        productId={product._id}
+      ></CostumerReview>
     </Layout>
   );
 }
@@ -144,17 +154,21 @@ export async function getServerSideProps(context) {
   const { params } = context;
   const { slug } = params;
   await db.connect();
-  var product = await Product.findOne({ slug: slug }).lean();
+  var product = await Product.findOne({ slug: slug }, '-reviews').lean();
+
   //pay close attention to .lean() which converts the document from mongodb
   //to a smaller javascript object
   //then we need to convert the _id,createdAt,updatedAt fields to string from plain objects
   //only numbers,string and bool are applicable
-  product = db.convertDocToObj(product);
 
+  // var reviews = await Review.find({ productId: product._id });
+
+  // reviews = reviews.map((review) => db.convertDocToObj(review));
+  //todo reviews
   await db.disconnect();
   return {
     props: {
-      product,
+      product: db.convertDocToObj(product),
     },
   };
 }

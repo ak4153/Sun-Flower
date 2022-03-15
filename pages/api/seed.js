@@ -5,6 +5,7 @@ import Order from '../../models/order';
 import data from '../../utils/data';
 import userData from '../../utils/userData';
 import db from '../../utils/db';
+
 const handler = nc();
 
 handler.get(async (req, res) => {

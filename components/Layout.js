@@ -16,6 +16,8 @@ import {
   ListItem,
   List,
   Divider,
+  TextField,
+  Input,
 } from '@material-ui/core';
 
 import useStyles from '../utils/styles';
@@ -28,7 +30,9 @@ import { Box, IconButton } from '@mui/material';
 import MenuIcon from '@material-ui/icons/Menu';
 import Cancel from '@material-ui/icons/Cancel';
 import { Drawer } from '@mui/material';
+
 import axios from 'axios';
+import SearchBox from './SearchBox';
 export default function Layout({ children, title, description }) {
   const classes = useStyles();
   //const value = { state, dispatch };
@@ -174,7 +178,11 @@ export default function Layout({ children, title, description }) {
               </List>
             </Drawer>
 
-            <div className={classes.grow}></div>
+            <div className={classess.searchSection}>
+              <Box display="flex" justifyContent="space-between">
+                <SearchBox></SearchBox>
+              </Box>
+            </div>
             <Switch checked={mode} onChange={darkModeChangeHandler}></Switch>
             <div>
               <NextLink href="/cart" passHref>

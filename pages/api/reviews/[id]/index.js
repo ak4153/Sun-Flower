@@ -1,14 +1,20 @@
 import nc from 'next-connect';
 
-import Review from '../../../../models/review';
 import db from '../../../../utils/db';
+import Product from '../../../../models/product';
 
+//reviews fetch
 const handler = nc();
 //finds all relevant reviews to a product
 handler.get(async (req, res) => {
   await db.connect();
-  const reviews = await Review.find({ productId: req.query.id });
+
+  const product = await Product.findById(req.query.id);
   await db.disconnect();
-  res.status(202).send(reviews);
+  if (product.reviews) {
+    res.status(202).send(product.reviews);
+  } else {
+    res.status(202).send([]);
+  }
 });
 export default handler;
