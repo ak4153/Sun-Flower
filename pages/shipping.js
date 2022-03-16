@@ -1,5 +1,6 @@
 import {
   Button,
+  Grid,
   Link,
   List,
   ListItem,
@@ -24,15 +25,13 @@ function Shipping() {
     watch,
   } = useForm();
 
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [name, setName] = useState();
   const { state, dispatch } = useContext(Store);
   const classes = useStyles();
   const router = useRouter();
   const [alert, setAlert] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState();
-  const { fullName, address, country, postalCode, city } = state.shippingData;
+
+  const { fullName, address, country, postalCode, city, lng, lat } =
+    state.shippingData;
   const onSubmit = ({ fullName, address, city, postalCode, country }) => {
     if (fullName && address && city && postalCode && country) {
       router.push('/payment');
@@ -145,7 +144,7 @@ function Shipping() {
                   inputProps={{ type: 'text' }}
                   error={Boolean(errors.city)}
                   helperText={
-                    errors.fullName
+                    errors.city
                       ? errors.city.type === 'pattern'
                         ? "city isn't valid"
                         : 'city is required'
@@ -218,6 +217,30 @@ function Shipping() {
               )}
             ></Controller>
           </ListItem>
+
+          <ListItem>
+            <Grid container spacing={5} alignItems="center">
+              <Grid item>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="primary"
+                  onClick={() => router.push('/map')}
+                >
+                  Map
+                </Button>
+              </Grid>
+              <Grid item>
+                {lat && lng && (
+                  <>
+                    <Typography>Latitude: {lat}</Typography>
+                    <Typography>Longitude: {lng}</Typography>
+                  </>
+                )}
+              </Grid>
+            </Grid>
+          </ListItem>
+
           <ListItem>
             <Button
               fullWidth

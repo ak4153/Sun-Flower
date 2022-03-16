@@ -95,6 +95,25 @@ const reducer = (state, action) => {
       Cookies.remove('cartItems');
       return { ...state, cart: { cartItems: [] } };
     }
+    case 'SAVE_SHIPPING_ADDRESS_MAP_LOCATION': {
+      const data = action.payload;
+      const address = action.payload.address.split(',');
+      /**0: "Dov Hoz St"
+1: " Tel Aviv-Yafo"
+2: " Israel" */
+      const addressToSave = {
+        fullName: state.user.name,
+        address: address[0],
+        country: address[2],
+        postalCode: '',
+        city: address[1],
+        lat: data.lat,
+        lng: data.lng,
+      };
+
+      Cookies.set('shippingDataFromMap', JSON.stringify(addressToSave));
+      return { ...state, shippingData: addressToSave };
+    }
     default:
       return state;
   }

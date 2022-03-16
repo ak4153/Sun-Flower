@@ -249,7 +249,17 @@ const PlaceOrder = () => {
                   </Grid>
                 </Grid>
               </ListItem>
-
+              <ListItem>
+                {' '}
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="primary"
+                  onClick={handlePlaceOrder}
+                >
+                  Place Order
+                </Button>
+              </ListItem>
               <ListItem>
                 <Button
                   variant="contained"
@@ -268,8 +278,6 @@ const PlaceOrder = () => {
             </List>
           </Card>
         </Grid>
-
-        {/* */}
       </Grid>
     </Layout>
   );
