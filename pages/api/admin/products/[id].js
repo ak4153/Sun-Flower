@@ -16,8 +16,11 @@ handler.put(async (req, res) => {
     category,
     image,
     slug,
+    featuredImage,
+    featured,
   } = req.body;
   await db.connect();
+  console.log(req.body.featured);
   const product = await Product.findById(productId);
   if (product) {
     product.price = price;
@@ -28,6 +31,8 @@ handler.put(async (req, res) => {
     product.description = description;
     product.category = category;
     product.countInStock = countInStock;
+    product.featuredImage = featuredImage || '';
+    product.isFeatured = featured;
     await product.save();
     await db.disconnect();
     return res.status(202).send({ message: 'Product updated successfully' });

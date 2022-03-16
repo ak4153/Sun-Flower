@@ -2,7 +2,9 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   CircularProgress,
+  FormControlLabel,
   Grid,
   Input,
   List,
@@ -76,6 +78,7 @@ function ProductsHistory(props) {
   const [alert, setAlert] = useState('');
   const { product } = props;
   const productId = product._id;
+  const [featured, setFeatured] = useState(product.isFeatured);
   const [{ loading, error, loadingUpload, image }, dispatch] = useReducer(
     reducer,
     {
@@ -98,11 +101,12 @@ function ProductsHistory(props) {
     if (!user && !user.isAdmin) router.push('/login');
   }, []);
 
-  useEffect(() => {
-    console.log(image);
-  }, [image]);
-
-  const uploadHandler = async (e) => {
+  useEffect(() => {}, [image]);
+  /**
+   * @param {any} event
+   * @param {Bool} isFeatured  Bool
+   */
+  const uploadHandler = async (e, isFeatured) => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
 
@@ -118,7 +122,7 @@ function ProductsHistory(props) {
       })
       .then(({ data }) => {
         dispatch({ type: 'UPLOAD_SUCCESS', payload: data.secure_url });
-        setValue('image', data.secure_url);
+        setValue(isFeatured ? 'featuredImage' : 'image', data.secure_url);
       })
       .catch((error) => {
         dispatch({ type: 'UPLOAD_FAIL', payload: getError(error) });
@@ -134,8 +138,10 @@ function ProductsHistory(props) {
     category,
     image,
     slug,
+    featuredImage,
   }) => {
     dispatch({ type: 'FETCH_REQUEST' });
+
     axios
       .put(
         '/api/admin/products/id',
@@ -149,6 +155,8 @@ function ProductsHistory(props) {
           category,
           image,
           slug,
+          featured,
+          featuredImage,
         },
         {
           headers: { Authorization: `Bearer ${user.token}` },
@@ -163,6 +171,11 @@ function ProductsHistory(props) {
         setAlert(err.message);
       });
   };
+  const featuredCheckboxHandler = (e) => {
+    console.log(e.target.checked);
+    setFeatured(e.target.checked);
+  };
+
   return (
     <Layout title="Edit Product">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -316,9 +329,71 @@ function ProductsHistory(props) {
                     <ListItem>
                       <Button component="label">
                         Upload File
-                        <input type="file" onChange={uploadHandler} hidden />
+                        <input
+                          type="file"
+                          onChange={(e) => uploadHandler(e, false)}
+                          hidden
+                        />
                       </Button>
                       {loadingUpload && <CircularProgress />}
+                    </ListItem>
+
+                    <ListItem>
+                      <FormControlLabel
+                        label="Featured"
+                        control={
+                          <Checkbox
+                            checked={featured}
+                            onClick={(e) => featuredCheckboxHandler(e)}
+                          />
+                        }
+                      ></FormControlLabel>
+                    </ListItem>
+
+                    <ListItem>
+                      <Controller
+                        name="featuredImage"
+                        control={control}
+                        defaultValue={product.featuredImage}
+                        rules={{
+                          required: true,
+                          minLength: 3,
+                        }}
+                        render={({ field }) => (
+                          <TextField
+                            {...register('featuredImage', { required: true })}
+                            id="featuredImage"
+                            label="featured image"
+                            fullWidth
+                            variant="outlined"
+                            type="text"
+                            inputProps={{ type: 'text' }}
+                            error={Boolean(errors.featuredImage)}
+                            helperText={
+                              errors.featuredImage
+                                ? errors.featuredImage.type === 'minLength'
+                                  ? "featuredImage isn't valid, minimum of 3 characters"
+                                  : 'featuredImage is required'
+                                : ''
+                            }
+                            {...field}
+                          />
+                        )}
+                      ></Controller>
+                    </ListItem>
+                    <ListItem>
+                      {loadingUpload ? (
+                        <CircularProgress />
+                      ) : (
+                        <Button component="label">
+                          Upload File
+                          <input
+                            type="file"
+                            onChange={(e) => uploadHandler(e, true)}
+                            hidden
+                          />
+                        </Button>
+                      )}
                     </ListItem>
                     <ListItem>
                       <Controller
@@ -458,10 +533,6 @@ function ProductsHistory(props) {
                     </ListItem>
                   </List>
                 </CardContent>
-
-                <List>
-                  <ListItem></ListItem>
-                </List>
               </Card>
             )}
           </Grid>

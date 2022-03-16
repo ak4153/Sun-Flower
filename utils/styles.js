@@ -95,5 +95,12 @@ const useStyles = makeStyles((theme) => ({
     alignItem: 'space-between',
     justifyContent: 'center',
   },
+  mt1: {
+    marginTop: '20px',
+  },
+  carouselImage: {
+    height: '500px',
+    width: '100%',
+  },
 }));
 export default useStyles;

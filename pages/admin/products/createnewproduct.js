@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   CircularProgress,
   Grid,
   Input,
@@ -63,6 +64,30 @@ function reducer(state, action) {
         error: action.payload,
       };
     }
+
+    case 'UPLOADFEATURED_REQUEST': {
+      return {
+        ...state,
+        loadingUpload: true,
+        error: '',
+      };
+    }
+    case 'UPLOADFEATURED_SUCCESS': {
+      console.log('payload', action.payload);
+      return {
+        ...state,
+        loadingUpload: false,
+        error: '',
+        featuredImage: action.payload,
+      };
+    }
+    case 'UPLOADFEATURED_FAIL': {
+      return {
+        ...state,
+        loadingUpload: false,
+        error: action.payload,
+      };
+    }
     default:
       state;
   }
@@ -74,16 +99,15 @@ function ProductsHistory() {
   const { user } = state;
   const router = useRouter();
   const [alert, setAlert] = useState('');
-
-  const [{ loading, error, loadingUpload, image }, dispatch] = useReducer(
-    reducer,
-    {
+  const [featured, setFeatured] = useState(false);
+  const [{ loading, error, loadingUpload, image, featuredImage }, dispatch] =
+    useReducer(reducer, {
       loading: false,
       error: '',
       loadingUpload: false,
       image: '',
-    }
-  );
+      featuredImage: '',
+    });
 
   const {
     handleSubmit,
@@ -91,7 +115,7 @@ function ProductsHistory() {
     formState: { errors },
     control,
     setValue,
-  } = useForm();
+  } = useForm({});
 
   useEffect(() => {
     if (!user && !user.isAdmin) router.push('/login');
@@ -124,6 +148,29 @@ function ProductsHistory() {
       });
   };
 
+  const uploadFeaturedHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+
+    bodyFormData.append('file', file);
+
+    dispatch({ type: 'UPLOADFEATURED_REQUEST' });
+    axios
+      .post('/api/admin/upload', bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${user.token}`,
+        },
+      })
+      .then(({ data }) => {
+        dispatch({ type: 'UPLOADFEATURED_SUCCESS', payload: data.secure_url });
+        setValue('featuredImage', data.secure_url);
+      })
+      .catch((error) => {
+        dispatch({ type: 'UPLOADFEATURED_FAIL', payload: getError(error) });
+      });
+  };
+
   const onSubmit = ({
     name,
     brand,
@@ -133,6 +180,8 @@ function ProductsHistory() {
     category,
     image,
     slug,
+    isFeatured,
+    featuredImage,
   }) => {
     dispatch({ type: 'FETCH_REQUEST' });
     axios
@@ -147,6 +196,8 @@ function ProductsHistory() {
           category,
           image,
           slug,
+          isFeatured,
+          featuredImage,
         },
         {
           headers: { Authorization: `Bearer ${user.token}` },
@@ -283,7 +334,7 @@ function ProductsHistory() {
                       <Controller
                         name="image"
                         control={control}
-                        defaultValue={image}
+                        defaultValue={''}
                         rules={{
                           required: true,
                           minLength: 3,
@@ -311,12 +362,89 @@ function ProductsHistory() {
                       ></Controller>
                     </ListItem>
                     <ListItem>
-                      <Button component="label">
-                        Upload File
-                        <input type="file" onChange={uploadHandler} hidden />
-                      </Button>
-                      {loadingUpload && <CircularProgress />}
+                      {loadingUpload ? (
+                        <CircularProgress />
+                      ) : (
+                        <Button component="label">
+                          Upload File
+                          <input type="file" onChange={uploadHandler} hidden />
+                        </Button>
+                      )}
                     </ListItem>
+
+                    <ListItem>
+                      <Typography>Is featured?</Typography>
+                      <Controller
+                        name="isFeatured"
+                        control={control}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field }) => (
+                          <Checkbox
+                            {...register('isFeatured', { required: true })}
+                            id="isFeatured"
+                            label="is featured?"
+                            fullWidth
+                            variant="outlined"
+                            type="checkbox"
+                            inputProps={{ type: 'checkbox' }}
+                            error={Boolean(errors.isFeatured)}
+                            helperText={
+                              errors.isFeatured && 'isFeatured is required'
+                            }
+                            {...field}
+                          />
+                        )}
+                      ></Controller>
+                    </ListItem>
+
+                    <ListItem>
+                      <Controller
+                        name="featuredImage"
+                        control={control}
+                        defaultValue={''}
+                        rules={{
+                          required: true,
+                          minLength: 3,
+                        }}
+                        render={({ field }) => (
+                          <TextField
+                            {...register('featuredImage', { required: true })}
+                            id="featuredImage"
+                            label="featured image"
+                            fullWidth
+                            variant="outlined"
+                            type="text"
+                            inputProps={{ type: 'text' }}
+                            error={Boolean(errors.featuredImage)}
+                            helperText={
+                              errors.featuredImage
+                                ? errors.featuredImage.type === 'minLength'
+                                  ? "featuredImage isn't valid, minimum of 3 characters"
+                                  : 'featuredImage is required'
+                                : ''
+                            }
+                            {...field}
+                          />
+                        )}
+                      ></Controller>
+                    </ListItem>
+                    <ListItem>
+                      {loadingUpload ? (
+                        <CircularProgress />
+                      ) : (
+                        <Button component="label">
+                          Upload File
+                          <input
+                            type="file"
+                            onChange={uploadFeaturedHandler}
+                            hidden
+                          />
+                        </Button>
+                      )}
+                    </ListItem>
+
                     <ListItem>
                       <Controller
                         name="category"

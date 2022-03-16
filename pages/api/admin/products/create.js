@@ -15,7 +15,10 @@ handler.post(async (req, res) => {
     category,
     image,
     slug,
+    featuredImage,
+    isFeatured,
   } = req.body;
+  console.log(req.body);
   await db.connect();
   const product = new Product();
   if (product) {
@@ -27,6 +30,8 @@ handler.post(async (req, res) => {
     product.description = description;
     product.category = category;
     product.countInStock = countInStock;
+    product.featuredImage = featuredImage || '';
+    product.isFeatured = isFeatured;
     await product.save();
     await db.disconnect();
     return res.status(202).send({ message: 'Product created successfully' });
