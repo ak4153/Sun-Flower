@@ -250,7 +250,6 @@ const PlaceOrder = () => {
                 </Grid>
               </ListItem>
               <ListItem>
-                {' '}
                 <Button
                   variant="contained"
                   fullWidth
@@ -260,16 +259,7 @@ const PlaceOrder = () => {
                   Place Order
                 </Button>
               </ListItem>
-              <ListItem>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  color="primary"
-                  onClick={handlePlaceOrder}
-                >
-                  Place Order
-                </Button>
-              </ListItem>
+
               {loading && (
                 <ListItem>
                   <CircularProgress />
